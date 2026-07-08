@@ -1,0 +1,214 @@
+{
+    "question": "Agrupa las transacciones por categoría MCC.",
+    "sql": "SELECT\n  mcc_description,\n  COUNT(*) AS total_transactions\nFROM transactions_enriched\nGROUP BY mcc_description\nORDER BY total_transactions DESC\nLIMIT 50;",
+    "safe": true,
+    "columns": [
+        "mcc_description",
+        "total_transactions"
+    ],
+    "rows": [
+        [
+            "Grocery Stores, Supermarkets",
+            1592584
+        ],
+        [
+            "Miscellaneous Food Stores",
+            1460875
+        ],
+        [
+            "Service Stations",
+            1424711
+        ],
+        [
+            "Eating Places and Restaurants",
+            999738
+        ],
+        [
+            "Drug Stores and Pharmacies",
+            772913
+        ],
+        [
+            "Tolls and Bridge Fees",
+            674135
+        ],
+        [
+            "Wholesale Clubs",
+            601942
+        ],
+        [
+            "Money Transfer",
+            589140
+        ],
+        [
+            "Taxicabs and Limousines",
+            500662
+        ],
+        [
+            "Fast Food Restaurants",
+            499659
+        ],
+        [
+            "Automotive Service Shops",
+            478263
+        ],
+        [
+            "Department Stores",
+            475384
+        ],
+        [
+            "Drinking Places (Alcoholic Beverages)",
+            248570
+        ],
+        [
+            "Discount Stores",
+            246545
+        ],
+        [
+            "Utilities - Electric, Gas, Water, Sanitary",
+            242993
+        ],
+        [
+            "Book Stores",
+            232387
+        ],
+        [
+            "Telecommunication Services",
+            218243
+        ],
+        [
+            "Lumber and Building Materials",
+            173261
+        ],
+        [
+            "Motion Picture Theaters",
+            145046
+        ],
+        [
+            "Package Stores, Beer, Wine, Liquor",
+            128875
+        ],
+        [
+            "Beauty and Barber Shops",
+            106616
+        ],
+        [
+            "Motor Freight Carriers and Trucking",
+            99759
+        ],
+        [
+            "Postal Services - Government Only",
+            99382
+        ],
+        [
+            "Miscellaneous Home Furnishing Stores",
+            86111
+        ],
+        [
+            "Local and Suburban Commuter Transportation",
+            84105
+        ],
+        [
+            "Family Clothing Stores",
+            72550
+        ],
+        [
+            "Artist Supply Stores, Craft Shops",
+            67806
+        ],
+        [
+            "Digital Goods - Media, Books, Apps",
+            62502
+        ],
+        [
+            "Cable, Satellite, and Other Pay Television Services",
+            51526
+        ],
+        [
+            "Insurance Sales, Underwriting",
+            51242
+        ],
+        [
+            "Cleaning and Maintenance Services",
+            50905
+        ],
+        [
+            "Theatrical Producers",
+            39544
+        ],
+        [
+            "Car Washes",
+            39075
+        ],
+        [
+            "Hardware Stores",
+            35488
+        ],
+        [
+            "Dentists and Orthodontists",
+            32496
+        ],
+        [
+            "Travel Agencies",
+            32014
+        ],
+        [
+            "Betting (including Lottery Tickets, Casinos)",
+            31955
+        ],
+        [
+            "Laundry Services",
+            31413
+        ],
+        [
+            "Doctors, Physicians",
+            24406
+        ],
+        [
+            "Passenger Railways",
+            17777
+        ],
+        [
+            "Athletic Fields, Commercial Sports",
+            17549
+        ],
+        [
+            "Sports Apparel, Riding Apparel Stores",
+            16725
+        ],
+        [
+            "Lodging - Hotels, Motels, Resorts",
+            16723
+        ],
+        [
+            "Optometrists, Optical Goods and Eyeglasses",
+            16588
+        ],
+        [
+            "Recreational Sports, Clubs",
+            16002
+        ],
+        [
+            "Gardening Supplies",
+            15893
+        ],
+        [
+            "Semiconductors and Related Devices",
+            15800
+        ],
+        [
+            "Industrial Equipment and Supplies",
+            15709
+        ],
+        [
+            "Medical Services",
+            15052
+        ],
+        [
+            "Lighting, Fixtures, Electrical Supplies",
+            14740
+        ]
+    ],
+    "row_format": "array",
+    "row_count": 50,
+    "attempts": []
+}

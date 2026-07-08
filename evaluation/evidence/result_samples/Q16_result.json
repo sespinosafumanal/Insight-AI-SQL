@@ -1,0 +1,26 @@
+{
+    "question": "¿Cuál es el importe medio de las transacciones fraudulentas frente a las no fraudulentas?",
+    "sql": "SELECT\n  CASE\n    WHEN is_fraud THEN 'fraudulentas'\n    ELSE 'no fraudulentas'\n  END AS tipo_transaccion,\n  AVG(amount) AS importe_medio\nFROM transactions\nGROUP BY is_fraud\nORDER BY tipo_transaccion;",
+    "safe": true,
+    "columns": [
+        "tipo_transaccion",
+        "importe_medio"
+    ],
+    "rows": [
+        [
+            "fraudulentas",
+            110.23468196819682
+        ],
+        [
+            "no fraudulentas",
+            42.848613783249384
+        ],
+        [
+            "no fraudulentas",
+            43.03015035008354
+        ]
+    ],
+    "row_format": "array",
+    "row_count": 3,
+    "attempts": []
+}

@@ -1,0 +1,17 @@
+fastmcp
+python-dotenv
+pydantic
+psycopg2-binary
+pandas
+sqlparse
+azure-search-documents
+azure-core
+openai
+vanna
+uvicorn
+fastapi
+jinja2
+python-multipart
+aiofiles
+bcrypt
+pyyaml

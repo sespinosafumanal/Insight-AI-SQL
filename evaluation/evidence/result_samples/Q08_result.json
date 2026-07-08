@@ -1,0 +1,26 @@
+{
+    "question": "Agrupa las transacciones por tipo de uso del chip.",
+    "sql": "SELECT\n  use_chip,\n  COUNT(*) AS total_transactions\nFROM transactions\nGROUP BY use_chip\nORDER BY total_transactions DESC\nLIMIT 50;",
+    "safe": true,
+    "columns": [
+        "use_chip",
+        "total_transactions"
+    ],
+    "rows": [
+        [
+            "Swipe Transaction",
+            6967185
+        ],
+        [
+            "Chip Transaction",
+            4780818
+        ],
+        [
+            "Online Transaction",
+            1557912
+        ]
+    ],
+    "row_format": "array",
+    "row_count": 3,
+    "attempts": []
+}

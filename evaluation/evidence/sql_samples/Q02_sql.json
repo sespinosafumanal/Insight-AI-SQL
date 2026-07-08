@@ -1,0 +1,56 @@
+{
+    "question": "Muéstrame las 10 transacciones con mayor importe.",
+    "sql": "SELECT id, amount\nFROM transactions\nORDER BY amount DESC\nLIMIT 10;",
+    "safe": true,
+    "reason": "Consulta SQL de solo lectura válida.",
+    "context_documents": [
+        {
+            "id": "query-example-auto-20260518-000003",
+            "doc_type": "query_example",
+            "title": "Consulta validada: fraude por categoría de comercio",
+            "score": 0.0333
+        },
+        {
+            "id": "query-example-auto-20260518-000005",
+            "doc_type": "query_example",
+            "title": "Consulta validada: ciudades con más transacciones fraudulentas",
+            "score": 0.0328
+        },
+        {
+            "id": "table-public-transactions",
+            "doc_type": "table",
+            "title": "Tabla transactions",
+            "score": 0.0328
+        },
+        {
+            "id": "relationship-transactions-client-id-users-id",
+            "doc_type": "relationship",
+            "title": "Relación transactions.client_id con users.id",
+            "score": 0.0323
+        },
+        {
+            "id": "column-public-transactions-amount",
+            "doc_type": "column",
+            "title": "Columna transactions.amount",
+            "score": 0.032
+        },
+        {
+            "id": "table-public-cards",
+            "doc_type": "table",
+            "title": "Tabla cards",
+            "score": 0.0308
+        },
+        {
+            "id": "view-public-transactions-enriched",
+            "doc_type": "view",
+            "title": "Vista transactions_enriched",
+            "score": 0.0292
+        },
+        {
+            "id": "table-public-fraud-labels",
+            "doc_type": "table",
+            "title": "Tabla fraud_labels",
+            "score": 0.0291
+        }
+    ]
+}

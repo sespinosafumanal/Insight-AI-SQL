@@ -1,0 +1,26 @@
+{
+    "question": "¿Qué tipos de tarjeta acumulan mayor volumen de transacciones?",
+    "sql": "SELECT c.card_type, COUNT(*) AS total_transactions\nFROM transactions t\nJOIN cards c ON t.card_id = c.id\nGROUP BY c.card_type\nORDER BY total_transactions DESC\nLIMIT 50;",
+    "safe": true,
+    "columns": [
+        "card_type",
+        "total_transactions"
+    ],
+    "rows": [
+        [
+            "Debit",
+            8280996
+        ],
+        [
+            "Credit",
+            4109189
+        ],
+        [
+            "Debit (Prepaid)",
+            915730
+        ]
+    ],
+    "row_format": "array",
+    "row_count": 3,
+    "attempts": []
+}

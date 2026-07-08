@@ -1,0 +1,272 @@
+{
+    "question": "¿Qué clientes tienen más tarjetas asociadas?",
+    "documents": [
+        {
+            "id": "table-public-cards",
+            "doc_type": "table",
+            "title": "Tabla cards",
+            "content": "Tabla de tarjetas emitidas a los clientes. Incluye información de producto y límites para analizar uso de tarjetas, exposición de crédito y su vínculo con transacciones y fraude.",
+            "table_name": "cards",
+            "column_name": null,
+            "source_system": "postgresql_wsl_fraud_db",
+            "sql_dialect": "postgresql",
+            "tags": [
+                "cards",
+                "payments",
+                "credit",
+                "limits",
+                "fraud"
+            ],
+            "related_tables": [
+                "users",
+                "transactions",
+                "transactions_enriched"
+            ],
+            "related_columns": [
+                "cards.id",
+                "cards.client_id",
+                "cards.card_brand",
+                "cards.card_type",
+                "cards.card_number",
+                "cards.expires",
+                "cards.cvv",
+                "cards.has_chip",
+                "cards.num_cards_issued",
+                "cards.credit_limit",
+                "cards.acct_open_date",
+                "cards.year_pin_last_changed",
+                "cards.card_on_dark_web"
+            ],
+            "created_at": "2026-05-18T00:00:00Z",
+            "updated_at": "2026-05-31T20:23:48.699Z",
+            "score": 0.0333
+        },
+        {
+            "id": "query-example-admin-c9786cd2-b807-4c57-b3ef-d6f215092dce",
+            "doc_type": "query_example",
+            "title": "Consulta validada: qué grupos tienen mayor fraude",
+            "content": "Pregunta del usuario: qué grupos tienen mayor fraude SQL validada: SELECT\n  CASE\n    WHEN u.current_age < 18 THEN 'Menor de 18'\n    WHEN u.current_age BETWEEN 18 AND 24 THEN '18-24'\n    WHEN u.current_age BETWEEN 25 AND 34 THEN '25-34'\n    WHEN u.current_age BETWEEN 35 AND 44 THEN '35-44'\n    WHEN u.current_age BETWEEN 45 AND 54 THEN '45-54'\n    WHEN u.current_age BETWEEN 55 AND 64 THEN '55-64'\n    ELSE '65+'\n  END AS age_group,\n  COUNT(*) AS total_transactions,\n  SUM(CASE WHEN t.is_fraud THEN 1 ELSE 0 END) AS fraudulent_transactions,\n  ROUND(100.0 * SUM(CASE WHEN t.is_fraud THEN 1 ELSE 0 END) / COUNT(*), 2) AS fraud_rate_percent\nFROM transactions t\nJOIN cards c ON t.card_id = c.id\nJOIN users u ON c.client_id = u.id\nGROUP BY 1\nORDER BY fraud_rate_percent DESC\nLIMIT 50;",
+            "table_name": "transactions",
+            "column_name": null,
+            "source_system": "postgresql_wsl_fraud_db",
+            "sql_dialect": "postgresql",
+            "tags": [
+                "query_example",
+                "admin_approved",
+                "executed_successfully"
+            ],
+            "related_tables": [
+                "transactions",
+                "cards",
+                "users"
+            ],
+            "related_columns": [
+                "u.current_age",
+                "t.is_fraud",
+                "t.card_id",
+                "c.id",
+                "c.client_id",
+                "u.id"
+            ],
+            "created_at": "2026-06-18T19:30:55.92Z",
+            "updated_at": "2026-06-18T20:10:30.338Z",
+            "score": 0.0331
+        },
+        {
+            "id": "query-example-auto-20260518-000002",
+            "doc_type": "query_example",
+            "title": "Consulta validada: fraude por tipo de tarjeta",
+            "content": "Pregunta del usuario: ¿Qué tipos de tarjeta tienen mayor tasa de fraude? SQL validada: SELECT c.card_type, COUNT(*) AS total_transactions, SUM(CASE WHEN t.is_fraud THEN 1 ELSE 0 END) AS fraudulent_transactions, ROUND(100.0 * SUM(CASE WHEN t.is_fraud THEN 1 ELSE 0 END) / COUNT(*), 2) AS fraud_rate_percent FROM transactions t JOIN cards c ON t.card_id = c.id GROUP BY c.card_type ORDER BY fraud_rate_percent DESC;",
+            "table_name": "transactions",
+            "column_name": null,
+            "source_system": "postgresql_wsl_fraud_db",
+            "sql_dialect": "postgresql",
+            "tags": [
+                "query_example",
+                "fraud",
+                "cards",
+                "card_type",
+                "auto_generated",
+                "executed_successfully"
+            ],
+            "related_tables": [
+                "transactions",
+                "cards"
+            ],
+            "related_columns": [
+                "transactions.card_id",
+                "transactions.is_fraud",
+                "cards.id",
+                "cards.card_type"
+            ],
+            "created_at": "2026-05-18T00:00:00Z",
+            "updated_at": "2026-05-31T20:23:46.164Z",
+            "score": 0.0325
+        },
+        {
+            "id": "column-public-cards-client-id",
+            "doc_type": "column",
+            "title": "Columna cards.client_id",
+            "content": "La columna cards.client_id referencia al cliente titular de la tarjeta. Tipo integer en PostgreSQL. Se usa para enlazar tarjetas con users.id y analizar cartera de tarjetas por cliente.",
+            "table_name": "cards",
+            "column_name": "client_id",
+            "source_system": "postgresql_wsl_fraud_db",
+            "sql_dialect": "postgresql",
+            "tags": [
+                "cards",
+                "users",
+                "client_id",
+                "join",
+                "integer"
+            ],
+            "related_tables": [
+                "cards",
+                "users"
+            ],
+            "related_columns": [
+                "cards.id",
+                "users.id",
+                "users.current_age",
+                "users.gender",
+                "users.yearly_income",
+                "users.credit_score"
+            ],
+            "created_at": "2026-05-18T00:00:00Z",
+            "updated_at": "2026-05-31T20:23:42.471Z",
+            "score": 0.032
+        },
+        {
+            "id": "table-public-users",
+            "doc_type": "table",
+            "title": "Tabla users",
+            "content": "Tabla maestra de usuarios/clientes. Contiene datos demográficos y de ubicación de cada cliente para segmentación, análisis de comportamiento, riesgo y contexto en análisis de fraude.",
+            "table_name": "users",
+            "column_name": null,
+            "source_system": "postgresql_wsl_fraud_db",
+            "sql_dialect": "postgresql",
+            "tags": [
+                "users",
+                "customers",
+                "demographics",
+                "fraud",
+                "risk"
+            ],
+            "related_tables": [
+                "cards",
+                "transactions",
+                "transactions_enriched"
+            ],
+            "related_columns": [
+                "users.id",
+                "users.current_age",
+                "users.retirement_age",
+                "users.birth_year",
+                "users.birth_month",
+                "users.gender",
+                "users.address",
+                "users.latitude",
+                "users.longitude",
+                "users.per_capita_income",
+                "users.yearly_income",
+                "users.total_debt",
+                "users.credit_score",
+                "users.num_credit_cards"
+            ],
+            "created_at": "2026-05-18T00:00:00Z",
+            "updated_at": "2026-05-31T20:23:48.406Z",
+            "score": 0.0308
+        },
+        {
+            "id": "column-public-transactions-amount",
+            "doc_type": "column",
+            "title": "Columna transactions.amount",
+            "content": "La columna transactions.amount registra el importe de la transacción. Tipo numeric en PostgreSQL. Se usa para análisis de volumen, ticket medio, detección de importes anómalos y comparación entre clientes, tarjetas o comercios.",
+            "table_name": "transactions",
+            "column_name": "amount",
+            "source_system": "postgresql_wsl_fraud_db",
+            "sql_dialect": "postgresql",
+            "tags": [
+                "transactions",
+                "amount",
+                "numeric",
+                "payments",
+                "fraud"
+            ],
+            "related_tables": [
+                "transactions",
+                "transactions_enriched"
+            ],
+            "related_columns": [
+                "transactions.id",
+                "transactions.date",
+                "transactions.client_id",
+                "transactions.card_id",
+                "transactions.mcc",
+                "transactions.is_fraud"
+            ],
+            "created_at": "2026-05-18T00:00:00Z",
+            "updated_at": "2026-05-31T20:23:40.83Z",
+            "score": 0.0164
+        },
+        {
+            "id": "relationship-cards-client-id-users-id",
+            "doc_type": "relationship",
+            "title": "Relación cards.client_id con users.id",
+            "content": "La columna cards.client_id referencia a users.id. Permite enlazar una tarjeta con su titular (usuario) para análisis de exposición por cliente, agregados por cliente y enriquecimiento de transacciones.",
+            "table_name": "cards",
+            "column_name": "client_id",
+            "source_system": "postgresql_wsl_fraud_db",
+            "sql_dialect": "postgresql",
+            "tags": [
+                "relationship",
+                "join",
+                "users",
+                "cards",
+                "client_id"
+            ],
+            "related_tables": [
+                "cards",
+                "users"
+            ],
+            "related_columns": [
+                "cards.client_id",
+                "users.id"
+            ],
+            "created_at": "2026-05-18T00:00:00Z",
+            "updated_at": "2026-05-31T20:23:47.336Z",
+            "score": 0.0164
+        },
+        {
+            "id": "column-public-transactions-is-fraud",
+            "doc_type": "column",
+            "title": "Columna transactions.is_fraud",
+            "content": "La columna transactions.is_fraud indica si una transacción es fraudulenta. Tipo boolean en PostgreSQL. true significa transacción fraudulenta y false significa transacción no fraudulenta. Debe usarse para calcular tasas de fraude, número de fraudes y comparativas entre categorías de comercio, tarjetas, clientes o periodos temporales.",
+            "table_name": "transactions",
+            "column_name": "is_fraud",
+            "source_system": "postgresql_wsl_fraud_db",
+            "sql_dialect": "postgresql",
+            "tags": [
+                "fraud",
+                "boolean",
+                "transactions",
+                "risk"
+            ],
+            "related_tables": [
+                "transactions",
+                "transactions_enriched",
+                "fraud_labels"
+            ],
+            "related_columns": [
+                "transactions.id",
+                "transactions.amount",
+                "transactions.date",
+                "transactions.mcc",
+                "fraud_labels.is_fraud"
+            ],
+            "created_at": "2026-05-18T00:00:00Z",
+            "updated_at": "2026-05-31T20:23:41.466Z",
+            "score": 0.0161
+        }
+    ],
+    "document_count": 8
+}

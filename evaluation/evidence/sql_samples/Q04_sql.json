@@ -1,0 +1,56 @@
+{
+    "question": "¿Cuántas tarjetas están registradas?",
+    "sql": "SELECT COUNT(*) AS total_cards\nFROM cards;",
+    "safe": true,
+    "reason": "Consulta SQL de solo lectura válida.",
+    "context_documents": [
+        {
+            "id": "query-example-admin-5bd38279-5922-4bda-beb3-a3743bc0664f",
+            "doc_type": "query_example",
+            "title": "Consulta validada: ¿Cuál es la tasa global de tarjetas expuestas en la Dark Web en toda la base de ",
+            "score": 0.0331
+        },
+        {
+            "id": "table-public-cards",
+            "doc_type": "table",
+            "title": "Tabla cards",
+            "score": 0.0331
+        },
+        {
+            "id": "column-public-cards-client-id",
+            "doc_type": "column",
+            "title": "Columna cards.client_id",
+            "score": 0.0321
+        },
+        {
+            "id": "query-example-auto-20260518-000002",
+            "doc_type": "query_example",
+            "title": "Consulta validada: fraude por tipo de tarjeta",
+            "score": 0.0167
+        },
+        {
+            "id": "column-public-transactions-card-id",
+            "doc_type": "column",
+            "title": "Columna transactions.card_id",
+            "score": 0.0164
+        },
+        {
+            "id": "column-public-cards-id",
+            "doc_type": "column",
+            "title": "Columna cards.id",
+            "score": 0.0161
+        },
+        {
+            "id": "column-public-transactions-amount",
+            "doc_type": "column",
+            "title": "Columna transactions.amount",
+            "score": 0.0161
+        },
+        {
+            "id": "column-public-users-id",
+            "doc_type": "column",
+            "title": "Columna users.id",
+            "score": 0.0159
+        }
+    ]
+}

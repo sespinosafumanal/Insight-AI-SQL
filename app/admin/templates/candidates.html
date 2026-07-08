@@ -1,0 +1,228 @@
+{% extends "layout.html" %}
+
+{% block content %}
+
+<div class="page-intro">
+    <h1 class="page-intro-title">Consultas pendientes de revisión</h1>
+    <p class="page-intro-desc">Revisa cada consulta SQL generada por la IA antes de indexarla en Azure AI Search.</p>
+</div>
+
+<!-- Stats -->
+<div class="stats-bar">
+    <div class="stat-card">
+        <div class="stat-card-icon blue">
+            <svg width="16" height="16" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.8" stroke="currentColor" aria-hidden="true">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"/>
+            </svg>
+        </div>
+        <span class="stat-number">{{ candidates | length }}</span>
+        <span class="stat-label">pendientes</span>
+    </div>
+
+    {% if query_stats %}
+    <div class="stat-card">
+        <div class="stat-card-icon" style="color: #6366f1; background: #e0e7ff;">
+            <svg width="16" height="16" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.8" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 3v11.25A2.25 2.25 0 0 0 6 16.5h2.25M3.75 3h-1.5m1.5 0h16.5m0 0h1.5m-1.5 0v11.25A2.25 2.25 0 0 1 18 16.5h-2.25m-7.5 0h7.5m-7.5 0-1 3m8.5-3 1 3m0 0 .5 1.5m-.5-1.5h-9.5m0 0-.5 1.5m.75-9 3-3 2.148 2.148A12.061 12.061 0 0 1 16.5 7.605" />
+            </svg>
+        </div>
+        <span class="stat-number">{{ query_stats.total }}</span>
+        <span class="stat-label">ejecutadas (SQL)</span>
+    </div>
+
+    <div class="stat-card">
+        <div class="stat-card-icon" style="color: #10b981; background: #d1fae5;">
+            <svg width="16" height="16" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.8" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+            </svg>
+        </div>
+        <span class="stat-number">{{ query_stats.success_rate }}%</span>
+        <span class="stat-label">SQL correctas</span>
+    </div>
+    {% endif %}
+</div>
+
+<!-- Gráfica de evolución temporal -->
+{% if query_stats %}
+<div class="chart-section" style="background: white; border: 1px solid #e2e8f0; border-radius: 8px; padding: 20px; margin-bottom: 24px;">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+        <h3 style="margin: 0; font-size: 16px; font-weight: 600;">Evolución de Consultas SQL</h3>
+        <select id="chartDays" class="search-input" style="width: auto; padding: 4px 12px; height: 32px; border-radius: 6px;">
+            <option value="7">Últimos 7 días</option>
+            <option value="15">Últimos 15 días</option>
+            <option value="30">Últimos 30 días</option>
+            <option value="90">Últimos 90 días</option>
+            <option value="360">Últimos 360 días</option>
+        </select>
+    </div>
+    <div style="position: relative; height: 300px; width: 100%;">
+        <canvas id="statsChart"></canvas>
+    </div>
+</div>
+{% endif %}
+
+{% if candidates %}
+
+<!-- Toolbar -->
+<div class="toolbar">
+    <div class="search-box">
+        <span class="search-box-icon">
+            <svg width="15" height="15" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.8" stroke="currentColor" aria-hidden="true">
+                <path stroke-linecap="round" stroke-linejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z"/>
+            </svg>
+        </span>
+        <input id="search-input" type="text" class="search-input" placeholder="Buscar por pregunta o SQL…" autocomplete="off">
+    </div>
+</div>
+
+<!-- Table -->
+<div class="table-container">
+    <table class="data-table" id="candidates-table">
+        <thead>
+            <tr>
+                <th>Pregunta</th>
+                <th>SQL generado</th>
+                <th>Filas</th>
+                <th>Fecha</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody id="candidates-tbody">
+            {% for c in candidates %}
+            <tr data-search="{{ c.question | lower }} {{ c.sql | lower }}">
+                <td class="col-question">
+                    <a href="/admin/candidate/{{ c.id }}" class="question-link" title="{{ c.question }}">
+                        {{ c.question[:100] }}{% if c.question | length > 100 %}…{% endif %}
+                    </a>
+                </td>
+                <td class="col-sql">
+                    <code title="{{ c.sql }}">{{ c.sql[:80] }}{% if c.sql | length > 80 %}…{% endif %}</code>
+                </td>
+                <td class="col-rows">{{ c.row_count or '—' }}</td>
+                <td class="col-date">{{ c.created_at[:16] }}</td>
+                <td class="col-actions">
+                    <div class="action-buttons">
+                        <form method="post" action="/admin/candidate/{{ c.id }}/approve" class="inline-form">
+                            <button type="submit" class="btn btn-approve btn-icon"
+                                    title="Aprobar e indexar"
+                                    onclick="return confirmAction(event, this)">
+                                <svg width="14" height="14" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" aria-hidden="true">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="m4.5 12.75 6 6 9-13.5"/>
+                                </svg>
+                            </button>
+                        </form>
+                        <form method="post" action="/admin/candidate/{{ c.id }}/reject" class="inline-form">
+                            <button type="submit" class="btn btn-reject btn-icon"
+                                    title="Rechazar"
+                                    onclick="return confirmAction(event, this)">
+                                <svg width="14" height="14" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" aria-hidden="true">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12"/>
+                                </svg>
+                            </button>
+                        </form>
+                        <a href="/admin/candidate/{{ c.id }}" class="btn btn-detail btn-icon" title="Ver detalle">
+                            <svg width="14" height="14" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.8" stroke="currentColor" aria-hidden="true">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 6H5.25A2.25 2.25 0 0 0 3 8.25v10.5A2.25 2.25 0 0 0 5.25 21h10.5A2.25 2.25 0 0 0 18 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25"/>
+                            </svg>
+                        </a>
+                    </div>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+{% else %}
+
+<div class="empty-state">
+    <div class="empty-icon">
+        <svg width="28" height="28" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M9 12h3.75M9 15h3.75M9 18h3.75m3 .75H18a2.25 2.25 0 0 0 2.25-2.25V6.108c0-1.135-.845-2.098-1.976-2.192a48.424 48.424 0 0 0-1.123-.08m-5.801 0c-.065.21-.1.433-.1.664 0 .414.336.75.75.75h4.5a.75.75 0 0 0 .75-.75 2.25 2.25 0 0 0-.1-.664m-5.8 0A2.251 2.251 0 0 1 13.5 2.25H15c1.012 0 1.867.668 2.15 1.586m-5.8 0c-.376.023-.75.05-1.124.08C9.095 4.01 8.25 4.973 8.25 6.108V8.25m0 0H4.875c-.621 0-1.125.504-1.125 1.125v11.25c0 .621.504 1.125 1.125 1.125h9.75c.621 0 1.125-.504 1.125-1.125V9.375c0-.621-.504-1.125-1.125-1.125H8.25Z"/>
+        </svg>
+    </div>
+    <p>No hay consultas pendientes de revisión</p>
+    <p class="empty-hint">Las consultas SQL ejecutadas con éxito a través del servidor MCP aparecerán aquí automáticamente para tu revisión.</p>
+</div>
+
+{% endif %}
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.js"></script>
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const ctx = document.getElementById('statsChart');
+        if (!ctx) return;
+        
+        Chart.defaults.font.family = "'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif";
+        
+        let statsChart;
+
+        function loadChartData(days) {
+            fetch(`/admin/api/chart_data?days=${days}`)
+                .then(response => response.json())
+                .then(data => {
+                    const chartData = data.data;
+                    const labels = chartData.map(item => item.date);
+                    const successful = chartData.map(item => item.successful);
+                    const failed = chartData.map(item => item.failed);
+
+                    if (statsChart) {
+                        statsChart.destroy();
+                    }
+
+                    statsChart = new Chart(ctx, {
+                        type: 'line',
+                        data: {
+                            labels: labels,
+                            datasets: [
+                                {
+                                    label: 'Correctas',
+                                    data: successful,
+                                    borderColor: '#10b981',
+                                    backgroundColor: 'rgba(16, 185, 129, 0.1)',
+                                    fill: true,
+                                    tension: 0.3
+                                },
+                                {
+                                    label: 'Incorrectas',
+                                    data: failed,
+                                    borderColor: '#ef4444',
+                                    backgroundColor: 'rgba(239, 68, 68, 0.1)',
+                                    fill: true,
+                                    tension: 0.3
+                                }
+                            ]
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            scales: {
+                                y: {
+                                    beginAtZero: true,
+                                    ticks: {
+                                        precision: 0
+                                    }
+                                }
+                            },
+                            plugins: {
+                                legend: {
+                                    position: 'top',
+                                }
+                            }
+                        }
+                    });
+                })
+                .catch(error => console.error('Error fetching chart data:', error));
+        }
+
+        const daysSelect = document.getElementById('chartDays');
+        daysSelect.addEventListener('change', function(e) {
+            loadChartData(e.target.value);
+        });
+
+        // Cargar datos por defecto al iniciar
+        loadChartData(daysSelect.value);
+    });
+</script>
+
+{% endblock %}

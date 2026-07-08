@@ -1,0 +1,16 @@
+{
+    "question": "¿Cuántas transacciones hay registradas en la base de datos?",
+    "sql": "SELECT COUNT(*) AS total_transactions\nFROM transactions;",
+    "safe": true,
+    "columns": [
+        "total_transactions"
+    ],
+    "rows": [
+        [
+            13305915
+        ]
+    ],
+    "row_format": "array",
+    "row_count": 1,
+    "attempts": []
+}

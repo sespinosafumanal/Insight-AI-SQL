@@ -1,0 +1,56 @@
+{
+    "question": "¿Qué clientes tienen más tarjetas asociadas?",
+    "sql": "SELECT\n  u.id AS client_id,\n  COUNT(c.id) AS num_cards\nFROM users u\nJOIN cards c ON c.client_id = u.id\nGROUP BY u.id\nORDER BY num_cards DESC\nLIMIT 50;",
+    "safe": true,
+    "reason": "Consulta SQL de solo lectura válida.",
+    "context_documents": [
+        {
+            "id": "table-public-cards",
+            "doc_type": "table",
+            "title": "Tabla cards",
+            "score": 0.0333
+        },
+        {
+            "id": "query-example-admin-c9786cd2-b807-4c57-b3ef-d6f215092dce",
+            "doc_type": "query_example",
+            "title": "Consulta validada: qué grupos tienen mayor fraude",
+            "score": 0.0331
+        },
+        {
+            "id": "query-example-auto-20260518-000002",
+            "doc_type": "query_example",
+            "title": "Consulta validada: fraude por tipo de tarjeta",
+            "score": 0.0325
+        },
+        {
+            "id": "column-public-cards-client-id",
+            "doc_type": "column",
+            "title": "Columna cards.client_id",
+            "score": 0.032
+        },
+        {
+            "id": "table-public-users",
+            "doc_type": "table",
+            "title": "Tabla users",
+            "score": 0.0308
+        },
+        {
+            "id": "column-public-transactions-amount",
+            "doc_type": "column",
+            "title": "Columna transactions.amount",
+            "score": 0.0164
+        },
+        {
+            "id": "relationship-cards-client-id-users-id",
+            "doc_type": "relationship",
+            "title": "Relación cards.client_id con users.id",
+            "score": 0.0164
+        },
+        {
+            "id": "column-public-transactions-is-fraud",
+            "doc_type": "column",
+            "title": "Columna transactions.is_fraud",
+            "score": 0.0161
+        }
+    ]
+}

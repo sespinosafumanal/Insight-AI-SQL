@@ -1,0 +1,264 @@
+{
+    "question": "¿Cuántas transacciones hay registradas en la base de datos?",
+    "documents": [
+        {
+            "id": "query-example-auto-20260518-000001",
+            "doc_type": "query_example",
+            "title": "Consulta validada: volumen total de transacciones y fraude",
+            "content": "Pregunta del usuario: ¿Cuál es el volumen total de transacciones y qué porcentaje son fraudulentas? SQL validada: SELECT COUNT(*) AS total_transactions, SUM(CASE WHEN is_fraud THEN 1 ELSE 0 END) AS fraudulent_transactions, ROUND(100.0 * SUM(CASE WHEN is_fraud THEN 1 ELSE 0 END) / COUNT(*), 2) AS fraud_rate_percent FROM transactions;",
+            "table_name": "transactions",
+            "column_name": null,
+            "source_system": "postgresql_wsl_fraud_db",
+            "sql_dialect": "postgresql",
+            "tags": [
+                "query_example",
+                "fraud",
+                "transactions",
+                "summary",
+                "auto_generated",
+                "executed_successfully"
+            ],
+            "related_tables": [
+                "transactions"
+            ],
+            "related_columns": [
+                "transactions.id",
+                "transactions.is_fraud"
+            ],
+            "created_at": "2026-05-18T00:00:00Z",
+            "updated_at": "2026-05-31T20:23:45.878Z",
+            "score": 0.0331
+        },
+        {
+            "id": "query-example-auto-20260518-000005",
+            "doc_type": "query_example",
+            "title": "Consulta validada: ciudades con más transacciones fraudulentas",
+            "content": "Pregunta del usuario: ¿Qué ciudades concentran más transacciones fraudulentas? SQL validada: SELECT merchant_city, merchant_state, COUNT(*) AS total_transactions, SUM(CASE WHEN is_fraud THEN 1 ELSE 0 END) AS fraudulent_transactions, ROUND(100.0 * SUM(CASE WHEN is_fraud THEN 1 ELSE 0 END) / COUNT(*), 2) AS fraud_rate_percent FROM transactions WHERE merchant_city IS NOT NULL GROUP BY merchant_city, merchant_state HAVING COUNT(*) > 50 ORDER BY fraudulent_transactions DESC LIMIT 10;",
+            "table_name": "transactions",
+            "column_name": null,
+            "source_system": "postgresql_wsl_fraud_db",
+            "sql_dialect": "postgresql",
+            "tags": [
+                "query_example",
+                "fraud",
+                "transactions",
+                "merchant_city",
+                "merchant_state",
+                "location",
+                "auto_generated",
+                "executed_successfully"
+            ],
+            "related_tables": [
+                "transactions"
+            ],
+            "related_columns": [
+                "transactions.merchant_city",
+                "transactions.merchant_state",
+                "transactions.is_fraud",
+                "transactions.id"
+            ],
+            "created_at": "2026-05-18T00:00:00Z",
+            "updated_at": "2026-05-31T20:23:47.054Z",
+            "score": 0.0325
+        },
+        {
+            "id": "column-public-transactions-mcc",
+            "doc_type": "column",
+            "title": "Columna transactions.mcc",
+            "content": "La columna transactions.mcc almacena el código MCC del comercio de la transacción. Tipo integer en PostgreSQL. Se usa para clasificar comercios por categoría y enriquecer transacciones con mcc_codes.description o con transactions_enriched.mcc_description.",
+            "table_name": "transactions",
+            "column_name": "mcc",
+            "source_system": "postgresql_wsl_fraud_db",
+            "sql_dialect": "postgresql",
+            "tags": [
+                "transactions",
+                "mcc",
+                "merchant_category",
+                "integer",
+                "join"
+            ],
+            "related_tables": [
+                "transactions",
+                "mcc_codes",
+                "transactions_enriched"
+            ],
+            "related_columns": [
+                "transactions.id",
+                "transactions.amount",
+                "mcc_codes.mcc",
+                "mcc_codes.description",
+                "transactions_enriched.mcc_description"
+            ],
+            "created_at": "2026-05-18T00:00:00Z",
+            "updated_at": "2026-05-31T20:23:41.167Z",
+            "score": 0.0311
+        },
+        {
+            "id": "column-public-transactions-client-id",
+            "doc_type": "column",
+            "title": "Columna transactions.client_id",
+            "content": "La columna transactions.client_id referencia al cliente asociado a la transacción. Tipo integer en PostgreSQL. Se usa para vincular transacciones con users.id y analizar comportamiento, gasto y fraude por cliente.",
+            "table_name": "transactions",
+            "column_name": "client_id",
+            "source_system": "postgresql_wsl_fraud_db",
+            "sql_dialect": "postgresql",
+            "tags": [
+                "transactions",
+                "users",
+                "client_id",
+                "join",
+                "integer"
+            ],
+            "related_tables": [
+                "transactions",
+                "users"
+            ],
+            "related_columns": [
+                "transactions.id",
+                "users.id",
+                "users.current_age",
+                "users.gender",
+                "users.yearly_income",
+                "users.credit_score"
+            ],
+            "created_at": "2026-05-18T00:00:00Z",
+            "updated_at": "2026-05-31T20:23:40.294Z",
+            "score": 0.0305
+        },
+        {
+            "id": "relationship-transactions-client-id-users-id",
+            "doc_type": "relationship",
+            "title": "Relación transactions.client_id con users.id",
+            "content": "La columna transactions.client_id referencia a users.id. Permite analizar transacciones por cliente, calcular métricas por usuario y cruzar comportamiento de pago con atributos del cliente.",
+            "table_name": "transactions",
+            "column_name": "client_id",
+            "source_system": "postgresql_wsl_fraud_db",
+            "sql_dialect": "postgresql",
+            "tags": [
+                "relationship",
+                "join",
+                "transactions",
+                "users",
+                "client_id"
+            ],
+            "related_tables": [
+                "transactions",
+                "users"
+            ],
+            "related_columns": [
+                "transactions.client_id",
+                "users.id"
+            ],
+            "created_at": "2026-05-18T00:00:00Z",
+            "updated_at": "2026-05-31T20:23:47.638Z",
+            "score": 0.0299
+        },
+        {
+            "id": "column-public-transactions-card-id",
+            "doc_type": "column",
+            "title": "Columna transactions.card_id",
+            "content": "La columna transactions.card_id referencia a la tarjeta utilizada en la transacción. Tipo integer en PostgreSQL. Se usa para enlazar cada operación con cards.id y analizar uso de tarjeta, límites y señales de riesgo.",
+            "table_name": "transactions",
+            "column_name": "card_id",
+            "source_system": "postgresql_wsl_fraud_db",
+            "sql_dialect": "postgresql",
+            "tags": [
+                "transactions",
+                "cards",
+                "card_id",
+                "join",
+                "integer"
+            ],
+            "related_tables": [
+                "transactions",
+                "cards"
+            ],
+            "related_columns": [
+                "transactions.id",
+                "cards.id",
+                "cards.client_id",
+                "cards.card_brand",
+                "cards.card_type",
+                "cards.credit_limit"
+            ],
+            "created_at": "2026-05-18T00:00:00Z",
+            "updated_at": "2026-05-31T20:23:40.579Z",
+            "score": 0.0294
+        },
+        {
+            "id": "table-public-transactions",
+            "doc_type": "table",
+            "title": "Tabla transactions",
+            "content": "Tabla principal de transacciones con tarjeta. Contiene una fila por transacción, con fecha, cliente, tarjeta, importe, comercio, ciudad, estado, código MCC, errores e indicador booleano de fraude. Usar esta tabla para análisis de volumen transaccional, fraude, importes, evolución temporal y comportamiento por comercio.",
+            "table_name": "transactions",
+            "column_name": null,
+            "source_system": "postgresql_wsl_fraud_db",
+            "sql_dialect": "postgresql",
+            "tags": [
+                "transactions",
+                "fraud",
+                "payments",
+                "cards",
+                "mcc"
+            ],
+            "related_tables": [
+                "users",
+                "cards",
+                "fraud_labels",
+                "mcc_codes",
+                "transactions_enriched"
+            ],
+            "related_columns": [
+                "transactions.id",
+                "transactions.date",
+                "transactions.client_id",
+                "transactions.card_id",
+                "transactions.amount",
+                "transactions.use_chip",
+                "transactions.merchant_id",
+                "transactions.merchant_city",
+                "transactions.merchant_state",
+                "transactions.zip",
+                "transactions.mcc",
+                "transactions.errors",
+                "transactions.is_fraud"
+            ],
+            "created_at": "2026-05-18T00:00:00Z",
+            "updated_at": "2026-05-31T20:23:48.857Z",
+            "score": 0.0286
+        },
+        {
+            "id": "column-public-transactions-id",
+            "doc_type": "column",
+            "title": "Columna transactions.id",
+            "content": "La columna transactions.id identifica de forma única cada transacción. Tipo bigint en PostgreSQL. Se usa como identificador principal para trazabilidad, unión con otras tablas y deduplicación de registros.",
+            "table_name": "transactions",
+            "column_name": "id",
+            "source_system": "postgresql_wsl_fraud_db",
+            "sql_dialect": "postgresql",
+            "tags": [
+                "transactions",
+                "identifier",
+                "bigint",
+                "primary_key"
+            ],
+            "related_tables": [
+                "transactions",
+                "transactions_enriched",
+                "fraud_labels"
+            ],
+            "related_columns": [
+                "transactions.date",
+                "transactions.client_id",
+                "transactions.card_id",
+                "transactions.amount",
+                "transactions.mcc",
+                "fraud_labels.transaction_id"
+            ],
+            "created_at": "2026-05-18T00:00:00Z",
+            "updated_at": "2026-05-31T20:23:39.777Z",
+            "score": 0.0282
+        }
+    ],
+    "document_count": 8
+}

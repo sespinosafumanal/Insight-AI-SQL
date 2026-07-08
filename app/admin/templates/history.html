@@ -1,0 +1,121 @@
+{% extends "layout.html" %}
+
+{% block content %}
+
+<div class="page-intro">
+    <h1 class="page-intro-title">Historial de consultas</h1>
+    <p class="page-intro-desc">Consultas que ya han sido revisadas y marcadas como aprobadas o rechazadas.</p>
+</div>
+
+<!-- Stats -->
+<div class="stats-bar">
+    {% if filter_status == 'approved' %}
+    <div class="stat-card">
+        <div class="stat-card-icon green">
+            <svg width="16" height="16" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.8" stroke="currentColor" aria-hidden="true">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"/>
+            </svg>
+        </div>
+        <span class="stat-number">{{ candidates | length }}</span>
+        <span class="stat-label">aprobadas</span>
+    </div>
+    {% else %}
+    <div class="stat-card">
+        <div class="stat-card-icon red">
+            <svg width="16" height="16" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.8" stroke="currentColor" aria-hidden="true">
+                <path stroke-linecap="round" stroke-linejoin="round" d="m9.75 9.75 4.5 4.5m0-4.5-4.5 4.5M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"/>
+            </svg>
+        </div>
+        <span class="stat-number">{{ candidates | length }}</span>
+        <span class="stat-label">rechazadas</span>
+    </div>
+    {% endif %}
+</div>
+
+<!-- Toolbar: segmented tabs + search -->
+<div class="toolbar">
+    <div class="filter-tabs" role="tablist">
+        <a href="/admin/history?status=approved"
+           class="filter-tab {% if filter_status == 'approved' %}active{% endif %}"
+           role="tab" aria-selected="{{ 'true' if filter_status == 'approved' else 'false' }}">
+            <svg width="13" height="13" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" aria-hidden="true">
+                <path stroke-linecap="round" stroke-linejoin="round" d="m4.5 12.75 6 6 9-13.5"/>
+            </svg>
+            Aprobadas
+        </a>
+        <a href="/admin/history?status=rejected"
+           class="filter-tab {% if filter_status == 'rejected' %}active{% endif %}"
+           role="tab" aria-selected="{{ 'true' if filter_status == 'rejected' else 'false' }}">
+            <svg width="13" height="13" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" aria-hidden="true">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12"/>
+            </svg>
+            Rechazadas
+        </a>
+    </div>
+
+    <div class="search-box">
+        <span class="search-box-icon">
+            <svg width="15" height="15" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.8" stroke="currentColor" aria-hidden="true">
+                <path stroke-linecap="round" stroke-linejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z"/>
+            </svg>
+        </span>
+        <input id="search-input" type="text" class="search-input" placeholder="Buscar por pregunta o notas…" autocomplete="off">
+    </div>
+</div>
+
+{% if candidates %}
+
+<div class="table-container">
+    <table class="data-table" id="candidates-table">
+        <thead>
+            <tr>
+                <th>Pregunta</th>
+                <th>SQL (resumen)</th>
+                <th>Filas</th>
+                <th>Revisado</th>
+                <th>Notas</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody id="candidates-tbody">
+            {% for c in candidates %}
+            <tr data-search="{{ c.question | lower }} {{ (c.reviewer_notes or '') | lower }}">
+                <td class="col-question">
+                    <a href="/admin/candidate/{{ c.id }}" class="question-link" title="{{ c.question }}">
+                        {{ c.question[:100] }}{% if c.question | length > 100 %}…{% endif %}
+                    </a>
+                </td>
+                <td class="col-sql">
+                    <code title="{{ c.sql }}">{{ c.sql[:80] }}{% if c.sql | length > 80 %}…{% endif %}</code>
+                </td>
+                <td class="col-rows">{{ c.row_count or '—' }}</td>
+                <td class="col-date">{{ (c.reviewed_at or '')[:16] }}</td>
+                <td class="col-notes">{{ (c.reviewer_notes or '—')[:60] }}</td>
+                <td>
+                    <a href="/admin/candidate/{{ c.id }}" class="btn btn-detail btn-icon" title="Ver detalle completo">
+                        <svg width="14" height="14" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.8" stroke="currentColor" aria-hidden="true">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 6H5.25A2.25 2.25 0 0 0 3 8.25v10.5A2.25 2.25 0 0 0 5.25 21h10.5A2.25 2.25 0 0 0 18 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25"/>
+                        </svg>
+                    </a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+{% else %}
+
+<div class="empty-state">
+    <div class="empty-icon">
+        <svg width="28" height="28" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M20.25 7.5l-.625 10.632a2.25 2.25 0 0 1-2.247 2.118H6.622a2.25 2.25 0 0 1-2.247-2.118L3.75 7.5M10 11.25h4M3.375 7.5h17.25c.621 0 1.125-.504 1.125-1.125v-1.5c0-.621-.504-1.125-1.125-1.125H3.375c-.621 0-1.125.504-1.125 1.125v1.5c0 .621.504 1.125 1.125 1.125Z"/>
+        </svg>
+    </div>
+    <p>No hay consultas {% if filter_status == 'approved' %}aprobadas{% else %}rechazadas{% endif %} todavía</p>
+    <p class="empty-hint">Las consultas que apruebes o rechaces desde el panel de pendientes aparecerán aquí.</p>
+</div>
+
+{% endif %}
+
+{% endblock %}

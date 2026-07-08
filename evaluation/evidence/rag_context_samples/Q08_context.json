@@ -1,0 +1,261 @@
+{
+    "question": "Agrupa las transacciones por tipo de uso del chip.",
+    "documents": [
+        {
+            "id": "categorical-values-transactions-use_chip",
+            "doc_type": "business_rule",
+            "title": "Valores posibles de transactions.use_chip",
+            "content": "La columna transactions.use_chip indica el método de uso de la tarjeta en la transacción. Valores posibles: Chip Transaction, Online Transaction, Swipe Transaction",
+            "table_name": "transactions",
+            "column_name": "use_chip",
+            "source_system": "postgresql_wsl_fraud_db",
+            "sql_dialect": "postgresql",
+            "tags": [
+                "categorical_values",
+                "transactions",
+                "use_chip"
+            ],
+            "related_tables": [
+                "transactions"
+            ],
+            "related_columns": [
+                "transactions.use_chip"
+            ],
+            "created_at": "2026-05-18T18:55:48Z",
+            "updated_at": "2026-05-31T20:23:39.227Z",
+            "score": 0.0333
+        },
+        {
+            "id": "query-example-auto-20260518-000002",
+            "doc_type": "query_example",
+            "title": "Consulta validada: fraude por tipo de tarjeta",
+            "content": "Pregunta del usuario: ¿Qué tipos de tarjeta tienen mayor tasa de fraude? SQL validada: SELECT c.card_type, COUNT(*) AS total_transactions, SUM(CASE WHEN t.is_fraud THEN 1 ELSE 0 END) AS fraudulent_transactions, ROUND(100.0 * SUM(CASE WHEN t.is_fraud THEN 1 ELSE 0 END) / COUNT(*), 2) AS fraud_rate_percent FROM transactions t JOIN cards c ON t.card_id = c.id GROUP BY c.card_type ORDER BY fraud_rate_percent DESC;",
+            "table_name": "transactions",
+            "column_name": null,
+            "source_system": "postgresql_wsl_fraud_db",
+            "sql_dialect": "postgresql",
+            "tags": [
+                "query_example",
+                "fraud",
+                "cards",
+                "card_type",
+                "auto_generated",
+                "executed_successfully"
+            ],
+            "related_tables": [
+                "transactions",
+                "cards"
+            ],
+            "related_columns": [
+                "transactions.card_id",
+                "transactions.is_fraud",
+                "cards.id",
+                "cards.card_type"
+            ],
+            "created_at": "2026-05-18T00:00:00Z",
+            "updated_at": "2026-05-31T20:23:46.164Z",
+            "score": 0.0331
+        },
+        {
+            "id": "query-example-auto-20260518-000003",
+            "doc_type": "query_example",
+            "title": "Consulta validada: fraude por categoría de comercio",
+            "content": "Pregunta del usuario: ¿Cuáles son las categorías de comercio con mayor tasa de fraude? SQL validada: SELECT mcc_description, COUNT(*) AS total_transactions, SUM(CASE WHEN is_fraud THEN 1 ELSE 0 END) AS fraudulent_transactions, ROUND(100.0 * SUM(CASE WHEN is_fraud THEN 1 ELSE 0 END) / COUNT(*), 2) AS fraud_rate_percent FROM transactions_enriched GROUP BY mcc_description HAVING COUNT(*) > 100 ORDER BY fraud_rate_percent DESC LIMIT 10;",
+            "table_name": "transactions_enriched",
+            "column_name": null,
+            "source_system": "postgresql_wsl_fraud_db",
+            "sql_dialect": "postgresql",
+            "tags": [
+                "query_example",
+                "fraud",
+                "mcc",
+                "merchant_category",
+                "transactions_enriched",
+                "auto_generated",
+                "executed_successfully"
+            ],
+            "related_tables": [
+                "transactions_enriched",
+                "transactions",
+                "mcc_codes"
+            ],
+            "related_columns": [
+                "transactions_enriched.mcc_description",
+                "transactions_enriched.is_fraud",
+                "transactions_enriched.id",
+                "transactions.mcc",
+                "mcc_codes.description"
+            ],
+            "created_at": "2026-05-18T00:00:00Z",
+            "updated_at": "2026-05-31T20:23:46.455Z",
+            "score": 0.0331
+        },
+        {
+            "id": "table-public-cards",
+            "doc_type": "table",
+            "title": "Tabla cards",
+            "content": "Tabla de tarjetas emitidas a los clientes. Incluye información de producto y límites para analizar uso de tarjetas, exposición de crédito y su vínculo con transacciones y fraude.",
+            "table_name": "cards",
+            "column_name": null,
+            "source_system": "postgresql_wsl_fraud_db",
+            "sql_dialect": "postgresql",
+            "tags": [
+                "cards",
+                "payments",
+                "credit",
+                "limits",
+                "fraud"
+            ],
+            "related_tables": [
+                "users",
+                "transactions",
+                "transactions_enriched"
+            ],
+            "related_columns": [
+                "cards.id",
+                "cards.client_id",
+                "cards.card_brand",
+                "cards.card_type",
+                "cards.card_number",
+                "cards.expires",
+                "cards.cvv",
+                "cards.has_chip",
+                "cards.num_cards_issued",
+                "cards.credit_limit",
+                "cards.acct_open_date",
+                "cards.year_pin_last_changed",
+                "cards.card_on_dark_web"
+            ],
+            "created_at": "2026-05-18T00:00:00Z",
+            "updated_at": "2026-05-31T20:23:48.699Z",
+            "score": 0.032
+        },
+        {
+            "id": "categorical-values-cards-has_chip",
+            "doc_type": "business_rule",
+            "title": "Valores posibles de cards.has_chip",
+            "content": "La columna cards.has_chip indica si la tarjeta tiene chip. Valores posibles: NO, YES",
+            "table_name": "cards",
+            "column_name": "has_chip",
+            "source_system": "postgresql_wsl_fraud_db",
+            "sql_dialect": "postgresql",
+            "tags": [
+                "categorical_values",
+                "cards",
+                "has_chip"
+            ],
+            "related_tables": [
+                "cards"
+            ],
+            "related_columns": [
+                "cards.has_chip"
+            ],
+            "created_at": "2026-05-18T18:55:48Z",
+            "updated_at": "2026-05-31T20:23:38.124Z",
+            "score": 0.0315
+        },
+        {
+            "id": "column-public-transactions-card-id",
+            "doc_type": "column",
+            "title": "Columna transactions.card_id",
+            "content": "La columna transactions.card_id referencia a la tarjeta utilizada en la transacción. Tipo integer en PostgreSQL. Se usa para enlazar cada operación con cards.id y analizar uso de tarjeta, límites y señales de riesgo.",
+            "table_name": "transactions",
+            "column_name": "card_id",
+            "source_system": "postgresql_wsl_fraud_db",
+            "sql_dialect": "postgresql",
+            "tags": [
+                "transactions",
+                "cards",
+                "card_id",
+                "join",
+                "integer"
+            ],
+            "related_tables": [
+                "transactions",
+                "cards"
+            ],
+            "related_columns": [
+                "transactions.id",
+                "cards.id",
+                "cards.client_id",
+                "cards.card_brand",
+                "cards.card_type",
+                "cards.credit_limit"
+            ],
+            "created_at": "2026-05-18T00:00:00Z",
+            "updated_at": "2026-05-31T20:23:40.579Z",
+            "score": 0.0306
+        },
+        {
+            "id": "table-public-transactions",
+            "doc_type": "table",
+            "title": "Tabla transactions",
+            "content": "Tabla principal de transacciones con tarjeta. Contiene una fila por transacción, con fecha, cliente, tarjeta, importe, comercio, ciudad, estado, código MCC, errores e indicador booleano de fraude. Usar esta tabla para análisis de volumen transaccional, fraude, importes, evolución temporal y comportamiento por comercio.",
+            "table_name": "transactions",
+            "column_name": null,
+            "source_system": "postgresql_wsl_fraud_db",
+            "sql_dialect": "postgresql",
+            "tags": [
+                "transactions",
+                "fraud",
+                "payments",
+                "cards",
+                "mcc"
+            ],
+            "related_tables": [
+                "users",
+                "cards",
+                "fraud_labels",
+                "mcc_codes",
+                "transactions_enriched"
+            ],
+            "related_columns": [
+                "transactions.id",
+                "transactions.date",
+                "transactions.client_id",
+                "transactions.card_id",
+                "transactions.amount",
+                "transactions.use_chip",
+                "transactions.merchant_id",
+                "transactions.merchant_city",
+                "transactions.merchant_state",
+                "transactions.zip",
+                "transactions.mcc",
+                "transactions.errors",
+                "transactions.is_fraud"
+            ],
+            "created_at": "2026-05-18T00:00:00Z",
+            "updated_at": "2026-05-31T20:23:48.857Z",
+            "score": 0.0296
+        },
+        {
+            "id": "table-public-mcc-codes",
+            "doc_type": "table",
+            "title": "Tabla mcc_codes",
+            "content": "Tabla de referencia de códigos MCC (Merchant Category Code). Permite clasificar comercios por categoría para análisis de gasto, patrones de consumo, detección de anomalías y enriquecimiento de transacciones.",
+            "table_name": "mcc_codes",
+            "column_name": null,
+            "source_system": "postgresql_wsl_fraud_db",
+            "sql_dialect": "postgresql",
+            "tags": [
+                "mcc",
+                "merchant",
+                "reference",
+                "transactions",
+                "fraud"
+            ],
+            "related_tables": [
+                "transactions",
+                "transactions_enriched"
+            ],
+            "related_columns": [
+                "mcc_codes.mcc",
+                "mcc_codes.description"
+            ],
+            "created_at": "2026-05-18T00:00:00Z",
+            "updated_at": "2026-05-31T20:23:49.312Z",
+            "score": 0.0292
+        }
+    ],
+    "document_count": 8
+}

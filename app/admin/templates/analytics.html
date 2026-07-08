@@ -1,0 +1,233 @@
+{% extends "layout.html" %}
+
+{% block content %}
+
+<div class="page-intro">
+    <h1 class="page-intro-title">Analíticas de Contexto RAG</h1>
+    <p class="page-intro-desc">Explora qué documentos de contexto están siendo más utilizados por la IA y su impacto en la calidad de las consultas.</p>
+</div>
+
+<div class="toolbar" style="justify-content: flex-end; margin-bottom: 20px;">
+    <select id="days-filter" class="search-input" style="width: auto; padding: 6px 12px; height: auto; border-radius: 6px;">
+        <option value="7">Últimos 7 días</option>
+        <option value="30" selected>Últimos 30 días</option>
+        <option value="90">Últimos 90 días</option>
+        <option value="365">Último año</option>
+    </select>
+</div>
+
+<div class="analytics-layout" style="display: grid; grid-template-columns: 2fr 1fr; gap: 24px;">
+    <!-- Treemap Container -->
+    <div class="chart-section" style="background: white; border: 1px solid #e2e8f0; border-radius: 8px; padding: 20px; min-height: 500px; display: flex; flex-direction: column;">
+        <h3 style="margin: 0 0 8px 0; font-size: 16px; font-weight: 600;">Top Documentos Más Usados (Treemap)</h3>
+        
+        <!-- Leyenda de colores -->
+        <div style="display: flex; gap: 16px; font-size: 12px; margin-bottom: 16px; color: #475569; flex-wrap: wrap;">
+            <div style="display: flex; align-items: center; gap: 6px;">
+                <span style="display: inline-block; width: 12px; height: 12px; border-radius: 3px; background: #1e40af;"></span>
+                <span>Aprobación Alta (≥ 80%)</span>
+            </div>
+            <div style="display: flex; align-items: center; gap: 6px;">
+                <span style="display: inline-block; width: 12px; height: 12px; border-radius: 3px; background: #3b82f6;"></span>
+                <span>Aprobación Media (50% - 79%)</span>
+            </div>
+            <div style="display: flex; align-items: center; gap: 6px;">
+                <span style="display: inline-block; width: 12px; height: 12px; border-radius: 3px; background: #93c5fd;"></span>
+                <span>Aprobación Baja (< 50%)</span>
+            </div>
+        </div>
+
+        <div id="treemap-container" style="flex: 1; min-height: 400px; width: 100%;"></div>
+    </div>
+
+    <!-- Details Panel -->
+    <div class="details-section" style="background: white; border: 1px solid #e2e8f0; border-radius: 8px; padding: 20px; display: flex; flex-direction: column;">
+        <h3 style="margin: 0 0 16px 0; font-size: 16px; font-weight: 600;">Detalles e Impacto</h3>
+        
+        <div id="empty-details" style="color: #64748b; font-size: 14px; text-align: center; margin-top: 40px;">
+            Haz clic en un bloque del Treemap para ver los detalles.
+        </div>
+        
+        <div id="doc-details" style="display: none;">
+            <div style="font-weight: 600; color: #0f172a; word-break: break-all; margin-bottom: 16px; padding-bottom: 12px; border-bottom: 1px solid #f1f5f9;" id="detail-id">
+                nombre_del_documento.pdf
+            </div>
+            
+            <div style="display: flex; gap: 16px; margin-bottom: 24px;">
+                <div>
+                    <div style="font-size: 12px; color: #64748b; text-transform: uppercase; font-weight: 600;">Usos</div>
+                    <div style="font-size: 24px; font-weight: 700; color: #0f172a;" id="detail-count">0</div>
+                </div>
+                <div>
+                    <div style="font-size: 12px; color: #64748b; text-transform: uppercase; font-weight: 600;">Aprobación</div>
+                    <div style="font-size: 24px; font-weight: 700; display: flex; align-items: center; gap: 6px;" id="detail-rate-container">
+                        <span id="detail-rate">0%</span>
+                        <div id="detail-dot" style="width: 8px; height: 8px; border-radius: 50%; background: #10b981;"></div>
+                    </div>
+                </div>
+            </div>
+            
+            <div style="font-size: 13px; font-weight: 600; color: #334155; margin-bottom: 12px;">Preguntas Asociadas:</div>
+            <ul id="detail-questions" style="margin: 0; padding-left: 20px; font-size: 13px; color: #475569; display: flex; flex-direction: column; gap: 8px;">
+            </ul>
+        </div>
+    </div>
+</div>
+
+<!-- Importar Apache ECharts -->
+<script src="https://cdn.jsdelivr.net/npm/echarts@5.5.0/dist/echarts.min.js"></script>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const chartDom = document.getElementById('treemap-container');
+        const myChart = echarts.init(chartDom);
+        
+        // Resize chart on window resize
+        window.addEventListener('resize', function() {
+            myChart.resize();
+        });
+
+        const daysFilter = document.getElementById('days-filter');
+        const emptyDetails = document.getElementById('empty-details');
+        const docDetails = document.getElementById('doc-details');
+        const detailId = document.getElementById('detail-id');
+        const detailCount = document.getElementById('detail-count');
+        const detailRate = document.getElementById('detail-rate');
+        const detailDot = document.getElementById('detail-dot');
+        const detailQuestions = document.getElementById('detail-questions');
+
+        let rawData = [];
+
+        function getColorForRate(rate) {
+            if (rate >= 80) return '#1e40af'; // Azul cobalto oscuro (Alta aprobación)
+            if (rate >= 50) return '#3b82f6'; // Azul medio de marca (Aprobación media)
+            return '#93c5fd'; // Azul claro / hielo (Baja aprobación)
+        }
+
+        function loadAnalytics(days) {
+            myChart.showLoading({
+                text: 'Cargando datos...',
+                color: '#2563eb',
+                textColor: '#64748b',
+                maskColor: 'rgba(255, 255, 255, 0.8)',
+                zlevel: 0
+            });
+            fetch(`/admin/api/analytics/context_docs?days=${days}`)
+                .then(response => response.json())
+                .then(json => {
+                    rawData = json.data;
+                    
+                    if (rawData.length === 0) {
+                        myChart.hideLoading();
+                        myChart.setOption({
+                            title: {
+                                text: 'No hay datos suficientes para el período seleccionado.',
+                                textStyle: { color: '#64748b', fontSize: 14, fontWeight: 'normal' },
+                                left: 'center',
+                                top: 'center'
+                            },
+                            series: []
+                        });
+                        return;
+                    }
+
+                    const treemapData = rawData.map((item, index) => {
+                        return {
+                            name: item.id.split('/').pop().substring(0, 30), // Short name
+                            value: item.count,
+                            itemStyle: {
+                                color: getColorForRate(item.approval_rate)
+                            },
+                            docId: item.id,
+                            rawIndex: index
+                        };
+                    });
+
+                    const option = {
+                        textStyle: {
+                            fontFamily: "'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif"
+                        },
+                        tooltip: {
+                            formatter: function (info) {
+                                const data = info.data;
+                                if (!data || data.rawIndex === undefined) return '';
+                                const item = rawData[data.rawIndex];
+                                return [
+                                    '<div style="font-weight:600; margin-bottom:8px;">' + item.id + '</div>',
+                                    'Usos: <b>' + item.count + '</b><br>',
+                                    'Aprobación: <b>' + item.approval_rate + '%</b>'
+                                ].join('');
+                            }
+                        },
+                        series: [{
+                            type: 'treemap',
+                            width: '100%',
+                            height: '100%',
+                            roam: false,
+                            nodeClick: false,
+                            breadcrumb: { show: false },
+                            label: {
+                                show: true,
+                                formatter: '{b}\n({c})'
+                            },
+                            itemStyle: {
+                                borderColor: '#fff',
+                                borderWidth: 2,
+                                gapWidth: 2
+                            },
+                            data: treemapData
+                        }]
+                    };
+
+                    myChart.setOption(option, true);
+                    myChart.hideLoading();
+                    
+                    // Reset details panel
+                    emptyDetails.style.display = 'block';
+                    docDetails.style.display = 'none';
+                })
+                .catch(err => {
+                    console.error('Error loading analytics', err);
+                    myChart.hideLoading();
+                });
+        }
+
+        myChart.on('click', function(params) {
+            if (params.data && params.data.rawIndex !== undefined) {
+                const item = rawData[params.data.rawIndex];
+                
+                emptyDetails.style.display = 'none';
+                docDetails.style.display = 'block';
+                
+                detailId.textContent = item.id;
+                detailCount.textContent = item.count;
+                detailRate.textContent = item.approval_rate + '%';
+                detailDot.style.background = getColorForRate(item.approval_rate);
+                
+                detailQuestions.innerHTML = '';
+                if (item.sample_questions && item.sample_questions.length > 0) {
+                    item.sample_questions.forEach(q => {
+                        const li = document.createElement('li');
+                        li.textContent = q;
+                        detailQuestions.appendChild(li);
+                    });
+                } else {
+                    const li = document.createElement('li');
+                    li.textContent = "No hay preguntas de ejemplo disponibles.";
+                    li.style.color = "#94a3b8";
+                    li.style.fontStyle = "italic";
+                    detailQuestions.appendChild(li);
+                }
+            }
+        });
+
+        daysFilter.addEventListener('change', function(e) {
+            loadAnalytics(e.target.value);
+        });
+
+        // Initialize
+        loadAnalytics(daysFilter.value);
+    });
+</script>
+
+{% endblock %}

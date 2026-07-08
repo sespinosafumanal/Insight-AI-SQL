@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="es" style="color-scheme: only light; background: #f8fafc;">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Edge/IE: fuerza el motor de renderizado más moderno -->
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <!-- CRÍTICO: Evita que Edge y Windows apliquen dark-mode al documento -->
+    <meta name="color-scheme" content="only light">
+    <meta name="theme-color" content="#ffffff">
+    <meta name="supported-color-schemes" content="light">
+    <meta name="darkreader-lock">
+    <meta name="description" content="Panel de administración — Insight AI-SQL MCP Server">
+    <title>{{ title | default("Admin Panel") }} — Insight AI-SQL</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap"
+        rel="stylesheet">
+    <!-- CSS crítico inline: se aplica ANTES del CSS externo, bloquea dark-mode en Edge
+         desde el primer frame de renderizado (evita flash de tema oscuro) -->
+    <style>
+        html,
+        body {
+            color-scheme: only light !important;
+            background: #f8fafc !important;
+            color: #0f172a !important;
+        }
+
+        /* Contener SVGs antes de que cargue el CSS externo — previene iconos gigantes */
+        svg {
+            max-width: 100%;
+            overflow: hidden;
+            display: block;
+        }
+
+        .sidebar-logo-icon svg {
+            width: 18px !important;
+            height: 18px !important;
+        }
+
+        .sidebar-logo-img {
+            height: 28px;
+            width: auto;
+            object-fit: contain;
+        }
+
+        .nav-icon svg {
+            width: 16px !important;
+            height: 16px !important;
+        }
+    </style>
+    <link rel="stylesheet" href="/admin/static/admin.css">
+</head>
+
+<body style="background:#f8fafc; color:#0f172a;">
+
+    <!-- ===== SIDEBAR ===== -->
+    <nav class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <div class="sidebar-logo-icon"
+                style="background: transparent; box-shadow: none; width: auto; height: auto;">
+                <img src="/admin/static/logo.png" alt="Insight AI-SQL" class="sidebar-logo-img">
+            </div>
+            <div class="sidebar-text">
+                <div class="sidebar-title">Insight AI-SQL</div>
+                <div class="sidebar-subtitle">Portal de administración</div>
+            </div>
+        </div>
+
+        <ul class="sidebar-nav">
+            <!-- Consultas SQL Dropdown -->
+            <li class="nav-item-dropdown {% if current_tab in ['pending', 'approved', 'rejected'] %}open{% endif %}"
+                id="nav-sql-dropdown">
+                <script>
+                    (function () {
+                        const openState = localStorage.getItem('menu-sql-open');
+                        const element = document.getElementById('nav-sql-dropdown');
+                        if (openState === 'true') {
+                            element.classList.add('open');
+                        } else if (openState === 'false') {
+                            element.classList.remove('open');
+                        }
+                    })();
+                </script>
+                <div class="nav-link" id="nav-sql-toggle"
+                    style="width: 100%; display: flex; align-items: center; padding: 0 0 0 12px; cursor: pointer; background: transparent;"
+                    onclick="const dp = this.closest('.nav-item-dropdown'); dp.classList.toggle('open'); localStorage.setItem('menu-sql-open', dp.classList.contains('open'));">
+                    <span class="nav-icon">
+                        <svg width="16" height="16" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                            stroke-width="1.8" stroke="currentColor" aria-hidden="true">
+                            <path stroke-linecap="round" stroke-linejoin="round"
+                                d="M20.25 6.375c0 2.278-3.694 4.125-8.25 4.125S3.75 8.653 3.75 6.375m16.5 0c0-2.278-3.694-4.125-8.25-4.125S3.75 4.097 3.75 6.375m16.5 0v11.25c0 2.278-3.694 4.125-8.25 4.125s-8.25-1.847-8.25-4.125V6.375m16.5 0v3.75m-16.5-3.75v3.75m16.5 0v3.75C20.25 16.153 16.556 18 12 18s-8.25-1.847-8.25-4.125v-3.75" />
+                        </svg>
+                    </span>
+                    <span class="nav-label-text" style="flex: 1; text-align: left;">Consultas SQL</span>
+                    <button type="button" class="dropdown-toggle"
+                        style="background: transparent; border: none; cursor: pointer; padding: 9px 12px; display: flex; align-items: center; justify-content: center; height: 100%; align-self: stretch; pointer-events: none;">
+                        <span class="dropdown-chevron"
+                            style="display: flex; align-items: center; justify-content: center; opacity: 0.7; transition: transform var(--ease-normal);">
+                            <svg width="12" height="12" xmlns="http://www.w3.org/2000/svg" fill="none"
+                                viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" aria-hidden="true">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" />
+                            </svg>
+                        </span>
+                    </button>
+                </div>
+                <ul class="dropdown-menu">
+                    <li>
+                        <a href="/admin/"
+                            class="nav-link dropdown-link {% if current_tab == 'pending' %}active{% endif %}"
+                            id="nav-pending">
+                            <span class="nav-icon">
+                                <svg width="16" height="16" xmlns="http://www.w3.org/2000/svg" fill="none"
+                                    viewBox="0 0 24 24" stroke-width="1.8" stroke="currentColor" aria-hidden="true">
+                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                        d="M12 6v6h4.5m4.5 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+                                </svg>
+                            </span>
+                            <span class="nav-label-text">Pendientes</span>
+                            {% if current_tab == 'pending' and candidates is defined and candidates %}
+                            <span class="nav-badge" style="margin-left: 8px;">{{ candidates | length }}</span>
+                            {% endif %}
+                        </a>
+                    </li>
+                    <li>
+                        <a href="/admin/history?status=approved"
+                            class="nav-link dropdown-link {% if current_tab == 'approved' %}active{% endif %}"
+                            id="nav-approved">
+                            <span class="nav-icon">
+                                <svg width="16" height="16" xmlns="http://www.w3.org/2000/svg" fill="none"
+                                    viewBox="0 0 24 24" stroke-width="1.8" stroke="currentColor" aria-hidden="true">
+                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                        d="M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+                                </svg>
+                            </span>
+                            <span class="nav-label-text">Aprobadas</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="/admin/history?status=rejected"
+                            class="nav-link dropdown-link {% if current_tab == 'rejected' %}active{% endif %}"
+                            id="nav-rejected">
+                            <span class="nav-icon">
+                                <svg width="16" height="16" xmlns="http://www.w3.org/2000/svg" fill="none"
+                                    viewBox="0 0 24 24" stroke-width="1.8" stroke="currentColor" aria-hidden="true">
+                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                        d="m9.75 9.75 4.5 4.5m0-4.5-4.5 4.5M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+                                </svg>
+                            </span>
+                            <span class="nav-label-text">Rechazadas</span>
+                        </a>
+                    </li>
+                </ul>
+            </li>
+
+            <!-- Analíticas -->
+            <li style="margin-top: 4px;">
+                <a href="/admin/analytics" class="nav-link {% if current_tab == 'analytics' %}active{% endif %}"
+                    id="nav-analytics">
+                    <span class="nav-icon">
+                        <svg width="16" height="16" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                            stroke-width="1.8" stroke="currentColor" aria-hidden="true">
+                            <path stroke-linecap="round" stroke-linejoin="round"
+                                d="M10.5 6a7.5 7.5 0 1 0 7.5 7.5h-7.5V6Z" />
+                            <path stroke-linecap="round" stroke-linejoin="round"
+                                d="M13.5 10.5H21A7.5 7.5 0 0 0 13.5 3v7.5Z" />
+                        </svg>
+                    </span>
+                    <span class="nav-label-text">Analíticas</span>
+                </a>
+            </li>
+        </ul>
+
+        <div class="sidebar-footer">
+            {% if current_user is defined and current_user %}
+            <div class="sidebar-user">
+                <div class="sidebar-user-avatar">
+                    <svg width="14" height="14" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                        stroke-width="1.8" stroke="currentColor" aria-hidden="true">
+                        <path stroke-linecap="round" stroke-linejoin="round"
+                            d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.501 20.118a7.5 7.5 0 0 1 14.998 0" />
+                    </svg>
+                </div>
+                <div class="sidebar-user-info">
+                    <span class="sidebar-user-name">{{ current_user }}</span>
+                    <a href="/admin/logout" class="sidebar-user-logout">Cerrar sesión</a>
+                </div>
+            </div>
+            {% endif %}
+            <div class="sidebar-footer-text">Insight AI-SQL</div>
+            <span class="sidebar-version">MCP v1.0</span>
+        </div>
+    </nav>
+
+    <!-- ===== MAIN CONTENT ===== -->
+    <main class="main-content" id="main-content">
+
+        <header class="page-header">
+            <div class="page-header-left">
+                <nav class="page-breadcrumb" aria-label="breadcrumb">
+                    <a href="/admin/">Inicio</a>
+                    {% if title and title != "Consultas SQL — Pendientes" %}
+                    <span class="breadcrumb-sep">/</span>
+                    <span class="page-title">{{ title }}</span>
+                    {% else %}
+                    <span class="breadcrumb-sep">/</span>
+                    <span class="page-title">Consultas SQL — Pendientes</span>
+                    {% endif %}
+                </nav>
+            </div>
+            <div class="page-header-right">
+                <div class="header-pill">
+                    <span class="dot"></span>
+                    Servidor activo
+                </div>
+            </div>
+        </header>
+
+        <div class="content-area">
+            {% block content %}{% endblock %}
+        </div>
+
+    </main>
+
+    <!-- ===== TOAST CONTAINER ===== -->
+    <div class="toast-container" id="toast-container" aria-live="polite"></div>
+
+    <script src="/admin/static/admin.js"></script>
+</body>
+
+</html>

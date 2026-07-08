@@ -1,0 +1,255 @@
+{
+    "question": "¿Qué ciudades concentran mayor número de transacciones?",
+    "documents": [
+        {
+            "id": "query-example-auto-20260518-000005",
+            "doc_type": "query_example",
+            "title": "Consulta validada: ciudades con más transacciones fraudulentas",
+            "content": "Pregunta del usuario: ¿Qué ciudades concentran más transacciones fraudulentas? SQL validada: SELECT merchant_city, merchant_state, COUNT(*) AS total_transactions, SUM(CASE WHEN is_fraud THEN 1 ELSE 0 END) AS fraudulent_transactions, ROUND(100.0 * SUM(CASE WHEN is_fraud THEN 1 ELSE 0 END) / COUNT(*), 2) AS fraud_rate_percent FROM transactions WHERE merchant_city IS NOT NULL GROUP BY merchant_city, merchant_state HAVING COUNT(*) > 50 ORDER BY fraudulent_transactions DESC LIMIT 10;",
+            "table_name": "transactions",
+            "column_name": null,
+            "source_system": "postgresql_wsl_fraud_db",
+            "sql_dialect": "postgresql",
+            "tags": [
+                "query_example",
+                "fraud",
+                "transactions",
+                "merchant_city",
+                "merchant_state",
+                "location",
+                "auto_generated",
+                "executed_successfully"
+            ],
+            "related_tables": [
+                "transactions"
+            ],
+            "related_columns": [
+                "transactions.merchant_city",
+                "transactions.merchant_state",
+                "transactions.is_fraud",
+                "transactions.id"
+            ],
+            "created_at": "2026-05-18T00:00:00Z",
+            "updated_at": "2026-05-31T20:23:47.054Z",
+            "score": 0.0333
+        },
+        {
+            "id": "query-example-auto-20260518-000003",
+            "doc_type": "query_example",
+            "title": "Consulta validada: fraude por categoría de comercio",
+            "content": "Pregunta del usuario: ¿Cuáles son las categorías de comercio con mayor tasa de fraude? SQL validada: SELECT mcc_description, COUNT(*) AS total_transactions, SUM(CASE WHEN is_fraud THEN 1 ELSE 0 END) AS fraudulent_transactions, ROUND(100.0 * SUM(CASE WHEN is_fraud THEN 1 ELSE 0 END) / COUNT(*), 2) AS fraud_rate_percent FROM transactions_enriched GROUP BY mcc_description HAVING COUNT(*) > 100 ORDER BY fraud_rate_percent DESC LIMIT 10;",
+            "table_name": "transactions_enriched",
+            "column_name": null,
+            "source_system": "postgresql_wsl_fraud_db",
+            "sql_dialect": "postgresql",
+            "tags": [
+                "query_example",
+                "fraud",
+                "mcc",
+                "merchant_category",
+                "transactions_enriched",
+                "auto_generated",
+                "executed_successfully"
+            ],
+            "related_tables": [
+                "transactions_enriched",
+                "transactions",
+                "mcc_codes"
+            ],
+            "related_columns": [
+                "transactions_enriched.mcc_description",
+                "transactions_enriched.is_fraud",
+                "transactions_enriched.id",
+                "transactions.mcc",
+                "mcc_codes.description"
+            ],
+            "created_at": "2026-05-18T00:00:00Z",
+            "updated_at": "2026-05-31T20:23:46.455Z",
+            "score": 0.032
+        },
+        {
+            "id": "table-public-transactions",
+            "doc_type": "table",
+            "title": "Tabla transactions",
+            "content": "Tabla principal de transacciones con tarjeta. Contiene una fila por transacción, con fecha, cliente, tarjeta, importe, comercio, ciudad, estado, código MCC, errores e indicador booleano de fraude. Usar esta tabla para análisis de volumen transaccional, fraude, importes, evolución temporal y comportamiento por comercio.",
+            "table_name": "transactions",
+            "column_name": null,
+            "source_system": "postgresql_wsl_fraud_db",
+            "sql_dialect": "postgresql",
+            "tags": [
+                "transactions",
+                "fraud",
+                "payments",
+                "cards",
+                "mcc"
+            ],
+            "related_tables": [
+                "users",
+                "cards",
+                "fraud_labels",
+                "mcc_codes",
+                "transactions_enriched"
+            ],
+            "related_columns": [
+                "transactions.id",
+                "transactions.date",
+                "transactions.client_id",
+                "transactions.card_id",
+                "transactions.amount",
+                "transactions.use_chip",
+                "transactions.merchant_id",
+                "transactions.merchant_city",
+                "transactions.merchant_state",
+                "transactions.zip",
+                "transactions.mcc",
+                "transactions.errors",
+                "transactions.is_fraud"
+            ],
+            "created_at": "2026-05-18T00:00:00Z",
+            "updated_at": "2026-05-31T20:23:48.857Z",
+            "score": 0.0306
+        },
+        {
+            "id": "categorical-values-transactions-use_chip",
+            "doc_type": "business_rule",
+            "title": "Valores posibles de transactions.use_chip",
+            "content": "La columna transactions.use_chip indica el método de uso de la tarjeta en la transacción. Valores posibles: Chip Transaction, Online Transaction, Swipe Transaction",
+            "table_name": "transactions",
+            "column_name": "use_chip",
+            "source_system": "postgresql_wsl_fraud_db",
+            "sql_dialect": "postgresql",
+            "tags": [
+                "categorical_values",
+                "transactions",
+                "use_chip"
+            ],
+            "related_tables": [
+                "transactions"
+            ],
+            "related_columns": [
+                "transactions.use_chip"
+            ],
+            "created_at": "2026-05-18T18:55:48Z",
+            "updated_at": "2026-05-31T20:23:39.227Z",
+            "score": 0.0303
+        },
+        {
+            "id": "relationship-transactions-client-id-users-id",
+            "doc_type": "relationship",
+            "title": "Relación transactions.client_id con users.id",
+            "content": "La columna transactions.client_id referencia a users.id. Permite analizar transacciones por cliente, calcular métricas por usuario y cruzar comportamiento de pago con atributos del cliente.",
+            "table_name": "transactions",
+            "column_name": "client_id",
+            "source_system": "postgresql_wsl_fraud_db",
+            "sql_dialect": "postgresql",
+            "tags": [
+                "relationship",
+                "join",
+                "transactions",
+                "users",
+                "client_id"
+            ],
+            "related_tables": [
+                "transactions",
+                "users"
+            ],
+            "related_columns": [
+                "transactions.client_id",
+                "users.id"
+            ],
+            "created_at": "2026-05-18T00:00:00Z",
+            "updated_at": "2026-05-31T20:23:47.638Z",
+            "score": 0.0303
+        },
+        {
+            "id": "categorical-values-transactions-merchant_state",
+            "doc_type": "business_rule",
+            "title": "Valores posibles de transactions.merchant_state",
+            "content": "La columna transactions.merchant_state contiene los estados o regiones del comercio. Valores posibles: AA, AK, AL, AR, AZ, Albania, Algeria, Andorra, Antigua and Barbuda, Argentina, Aruba, Australia, Austria, Azerbaijan, Bahrain, Bangladesh, Barbados, Belgium, Belize, Benin, Bosnia and Herzegovina, Brazil, Brunei, Burkina Faso, CA, CO, CT, Cabo Verde, Cameroon, Canada, Chile, China, Colombia, Costa Rica, Cote d'Ivoire, Croatia, Cyprus, Czech Republic, DC, DE, Denmark, Dominican Republic, East Timor (Timor-Leste), Ecuador, Egypt, Equatorial Guinea, Eritrea, Estonia, Ethiopia, FL, Fiji, Finland, France, GA, Gabon, Georgia, Germany, Ghana, Greece, Guatemala, Guinea, Guyana, HI, Haiti, Honduras, Hong Kong, Hungary, IA, ID, IL, IN, Iceland, India, Indonesia, Iran, Iraq, Ireland, Israel, Italy, Jamaica, Japan, Jordan, KS, KY, Kenya, Kosovo, Kyrgyzstan, LA, Latvia, Lebanon, Liberia, Lithuania, Luxembourg, MA, MD, ME, MI, MN, MO, MS, MT, Macedonia, Malaysia, Maldives, Mali, Malta, Marshall Islands, Mexico, Micronesia, Moldova, Monaco, Mongolia, Montenegro, Morocco, Mozambique, Myanmar (Burma), NC, ND, NE, NH, NJ, NM, NV, NY, Nauru, Netherlands, New Zealand, Niger, Nigeria, Norway, OH, OK, OR, Oman, PA, Pakistan, Panama, Papua New Guinea, Peru, Philippines, Poland, Portugal, Qatar, RI, Republic of the Congo, Romania, Russia, SC, SD, Saint Vincent and the Grenadines, Samoa, Saudi Arabia, Senegal, Serbia, Seychelles, Sierra Leone, Singapore, Slovakia, Slovenia, Solomon Islands, South Africa, South Korea, South Sudan, Spain, Sri Lanka, Sudan, Suriname, Swaziland, Sweden, Switzerland, TN, TX, Taiwan, Thailand, The Bahamas, Tonga, Trinidad and Tobago, Tunisia, Turkey, Tuvalu, UT, Ukraine, United Arab Emirates, United Kingdom, Uruguay, Uzbekistan, VA, VT, Vanuatu, Vatican City, Venezuela, Vietnam, WA, WI, WV, WY, Yemen, Zambia, Zimbabwe",
+            "table_name": "transactions",
+            "column_name": "merchant_state",
+            "source_system": "postgresql_wsl_fraud_db",
+            "sql_dialect": "postgresql",
+            "tags": [
+                "categorical_values",
+                "transactions",
+                "merchant_state",
+                "location"
+            ],
+            "related_tables": [
+                "transactions"
+            ],
+            "related_columns": [
+                "transactions.merchant_state"
+            ],
+            "created_at": "2026-05-18T18:55:48Z",
+            "updated_at": "2026-05-31T20:23:39.057Z",
+            "score": 0.0303
+        },
+        {
+            "id": "column-public-transactions-amount",
+            "doc_type": "column",
+            "title": "Columna transactions.amount",
+            "content": "La columna transactions.amount registra el importe de la transacción. Tipo numeric en PostgreSQL. Se usa para análisis de volumen, ticket medio, detección de importes anómalos y comparación entre clientes, tarjetas o comercios.",
+            "table_name": "transactions",
+            "column_name": "amount",
+            "source_system": "postgresql_wsl_fraud_db",
+            "sql_dialect": "postgresql",
+            "tags": [
+                "transactions",
+                "amount",
+                "numeric",
+                "payments",
+                "fraud"
+            ],
+            "related_tables": [
+                "transactions",
+                "transactions_enriched"
+            ],
+            "related_columns": [
+                "transactions.id",
+                "transactions.date",
+                "transactions.client_id",
+                "transactions.card_id",
+                "transactions.mcc",
+                "transactions.is_fraud"
+            ],
+            "created_at": "2026-05-18T00:00:00Z",
+            "updated_at": "2026-05-31T20:23:40.83Z",
+            "score": 0.0277
+        },
+        {
+            "id": "column-public-transactions-merchant-city",
+            "doc_type": "column",
+            "title": "Columna transactions.merchant_city",
+            "content": "La columna transactions.merchant_city contiene la ciudad del comercio donde ocurre la transacción. Tipo text en PostgreSQL. Se usa para análisis geográfico, concentración de fraude por ciudad y patrones de consumo por ubicación del comercio.",
+            "table_name": "transactions",
+            "column_name": "merchant_city",
+            "source_system": "postgresql_wsl_fraud_db",
+            "sql_dialect": "postgresql",
+            "tags": [
+                "transactions",
+                "merchant",
+                "city",
+                "geography",
+                "text"
+            ],
+            "related_tables": [
+                "transactions",
+                "transactions_enriched"
+            ],
+            "related_columns": [
+                "transactions.id",
+                "transactions.date",
+                "transactions.amount",
+                "transactions.merchant_state",
+                "transactions.zip",
+                "transactions.mcc"
+            ],
+            "created_at": "2026-05-18T00:00:00Z",
+            "updated_at": "2026-05-31T20:23:41.635Z",
+            "score": 0.0275
+        }
+    ],
+    "document_count": 8
+}

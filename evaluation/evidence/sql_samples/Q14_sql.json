@@ -1,0 +1,56 @@
+{
+    "question": "¿Qué porcentaje de transacciones son fraudulentas?",
+    "sql": "SELECT ROUND(100.0 * SUM(CASE WHEN is_fraud THEN 1 ELSE 0 END) / COUNT(*), 2) AS fraud_rate_percent\nFROM transactions;",
+    "safe": true,
+    "reason": "Consulta SQL de solo lectura válida.",
+    "context_documents": [
+        {
+            "id": "query-example-auto-20260518-000001",
+            "doc_type": "query_example",
+            "title": "Consulta validada: volumen total de transacciones y fraude",
+            "score": 0.0333
+        },
+        {
+            "id": "query-example-auto-20260518-000005",
+            "doc_type": "query_example",
+            "title": "Consulta validada: ciudades con más transacciones fraudulentas",
+            "score": 0.0328
+        },
+        {
+            "id": "categorical-values-transactions-errors",
+            "doc_type": "business_rule",
+            "title": "Valores posibles de transactions.errors",
+            "score": 0.032
+        },
+        {
+            "id": "table-public-cards",
+            "doc_type": "table",
+            "title": "Tabla cards",
+            "score": 0.0313
+        },
+        {
+            "id": "table-public-transactions",
+            "doc_type": "table",
+            "title": "Tabla transactions",
+            "score": 0.0303
+        },
+        {
+            "id": "categorical-values-transactions-use_chip",
+            "doc_type": "business_rule",
+            "title": "Valores posibles de transactions.use_chip",
+            "score": 0.0301
+        },
+        {
+            "id": "categorical-values-transactions-is_fraud",
+            "doc_type": "business_rule",
+            "title": "Valores posibles de transactions.is_fraud",
+            "score": 0.0297
+        },
+        {
+            "id": "column-public-transactions-amount",
+            "doc_type": "column",
+            "title": "Columna transactions.amount",
+            "score": 0.028
+        }
+    ]
+}

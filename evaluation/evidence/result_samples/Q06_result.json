@@ -1,0 +1,16 @@
+{
+    "question": "¿Cuál es el importe total de todas las transacciones?",
+    "sql": "SELECT SUM(amount) AS total_amount\nFROM transactions;",
+    "safe": true,
+    "columns": [
+        "total_amount"
+    ],
+    "rows": [
+        [
+            571835522.28
+        ]
+    ],
+    "row_format": "array",
+    "row_count": 1,
+    "attempts": []
+}

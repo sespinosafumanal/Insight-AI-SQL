@@ -1,0 +1,16 @@
+{
+    "question": "¿Cuál es el importe medio de las transacciones?",
+    "sql": "SELECT ROUND(AVG(amount), 2) AS average_transaction_amount\nFROM transactions;",
+    "safe": true,
+    "columns": [
+        "average_transaction_amount"
+    ],
+    "rows": [
+        [
+            42.98
+        ]
+    ],
+    "row_format": "array",
+    "row_count": 1,
+    "attempts": []
+}

@@ -1,0 +1,23 @@
+# Configuración del Motor SQL
+sql:
+  # Límite máximo de filas que se retornarán de la base de datos (se inyecta en LIMIT)
+  max_rows: 50
+  # Número de reintentos con IA para corregir errores SQL antes de fallar por completo
+  max_retries: 3
+  
+# Configuración del Panel de Administración y Validaciones
+query_store:
+  # Número de filas de muestra que se guardan junto a la query en la base de datos SQLite de candidatos
+  sample_rows: 10
+
+# Configuración del motor de Búsqueda Vectorial (RAG)
+rag:
+  # Porcentaje máximo de documentos de tipo 'query_example' que se recuperarán del total
+  max_query_example_pct: 0.3
+  # Número total de documentos relevantes a recuperar del índice de IA Search para inyectar en el prompt
+  search_top_docs: 8
+
+# Configuración de los Reportes Ejecutivos
+reports:
+  # Número máximo de filas de datos devueltas por CADA sección individual del reporte (protege al LLM del desbordamiento)
+  max_rows_per_section: 50

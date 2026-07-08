@@ -1,0 +1,40 @@
+{
+    "question": "¿Cuál es la transacción de mayor importe?",
+    "sql": "SELECT *\nFROM transactions\nORDER BY amount DESC\nLIMIT 1;",
+    "safe": true,
+    "columns": [
+        "id",
+        "date",
+        "client_id",
+        "card_id",
+        "amount",
+        "use_chip",
+        "merchant_id",
+        "merchant_city",
+        "merchant_state",
+        "zip",
+        "mcc",
+        "errors",
+        "is_fraud"
+    ],
+    "rows": [
+        [
+            8544734,
+            "2010-09-22T06:37:00",
+            708,
+            5165,
+            6820.2,
+            "Swipe Transaction",
+            34524,
+            "Staten Island",
+            "NY",
+            "10302.0",
+            5712,
+            null,
+            null
+        ]
+    ],
+    "row_format": "array",
+    "row_count": 1,
+    "attempts": []
+}

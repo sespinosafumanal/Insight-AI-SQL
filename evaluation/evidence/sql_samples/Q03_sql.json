@@ -1,0 +1,56 @@
+{
+    "question": "¿Cuántos usuarios hay en la base de datos?",
+    "sql": "SELECT COUNT(*) AS total_users\nFROM users;",
+    "safe": true,
+    "reason": "Consulta SQL de solo lectura válida.",
+    "context_documents": [
+        {
+            "id": "table-public-users",
+            "doc_type": "table",
+            "title": "Tabla users",
+            "score": 0.0333
+        },
+        {
+            "id": "query-example-admin-8f46e626-9c5a-4461-a51c-44add63b806f",
+            "doc_type": "query_example",
+            "title": "Consulta validada: cuantos clientes tenemos de sexo masculino y cuantos de femenino?",
+            "score": 0.0328
+        },
+        {
+            "id": "categorical-values-users-gender",
+            "doc_type": "business_rule",
+            "title": "Valores posibles de users.gender",
+            "score": 0.0301
+        },
+        {
+            "id": "column-public-users-current-age",
+            "doc_type": "column",
+            "title": "Columna users.current_age",
+            "score": 0.0283
+        },
+        {
+            "id": "column-public-users-id",
+            "doc_type": "column",
+            "title": "Columna users.id",
+            "score": 0.0275
+        },
+        {
+            "id": "column-public-users-total-debt",
+            "doc_type": "column",
+            "title": "Columna users.total_debt",
+            "score": 0.0274
+        },
+        {
+            "id": "column-public-users-gender",
+            "doc_type": "column",
+            "title": "Columna users.gender",
+            "score": 0.027
+        },
+        {
+            "id": "query-example-admin-5bd38279-5922-4bda-beb3-a3743bc0664f",
+            "doc_type": "query_example",
+            "title": "Consulta validada: ¿Cuál es la tasa global de tarjetas expuestas en la Dark Web en toda la base de ",
+            "score": 0.0167
+        }
+    ]
+}

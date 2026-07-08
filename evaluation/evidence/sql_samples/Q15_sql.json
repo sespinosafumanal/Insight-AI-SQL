@@ -1,0 +1,56 @@
+{
+    "question": "¿Cuáles son las categorías MCC con más transacciones fraudulentas?",
+    "sql": "SELECT\n  mcc_description,\n  COUNT(*) AS total_transactions,\n  SUM(CASE WHEN is_fraud THEN 1 ELSE 0 END) AS fraudulent_transactions\nFROM transactions_enriched\nGROUP BY mcc_description\nHAVING COUNT(*) > 100\nORDER BY fraudulent_transactions DESC\nLIMIT 10;",
+    "safe": true,
+    "reason": "Consulta SQL de solo lectura válida.",
+    "context_documents": [
+        {
+            "id": "column-public-transactions-mcc",
+            "doc_type": "column",
+            "title": "Columna transactions.mcc",
+            "score": 0.0333
+        },
+        {
+            "id": "query-example-auto-20260518-000003",
+            "doc_type": "query_example",
+            "title": "Consulta validada: fraude por categoría de comercio",
+            "score": 0.0331
+        },
+        {
+            "id": "query-example-auto-20260518-000005",
+            "doc_type": "query_example",
+            "title": "Consulta validada: ciudades con más transacciones fraudulentas",
+            "score": 0.0331
+        },
+        {
+            "id": "relationship-transactions-mcc-mcc-codes-mcc",
+            "doc_type": "relationship",
+            "title": "Relación transactions.mcc con mcc_codes.mcc",
+            "score": 0.0325
+        },
+        {
+            "id": "column-public-mcc-codes-mcc",
+            "doc_type": "column",
+            "title": "Columna mcc_codes.mcc",
+            "score": 0.0318
+        },
+        {
+            "id": "table-public-mcc-codes",
+            "doc_type": "table",
+            "title": "Tabla mcc_codes",
+            "score": 0.0318
+        },
+        {
+            "id": "table-public-transactions",
+            "doc_type": "table",
+            "title": "Tabla transactions",
+            "score": 0.0315
+        },
+        {
+            "id": "view-public-transactions-enriched",
+            "doc_type": "view",
+            "title": "Vista transactions_enriched",
+            "score": 0.0313
+        }
+    ]
+}

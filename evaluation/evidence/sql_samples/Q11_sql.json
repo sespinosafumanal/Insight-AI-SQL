@@ -1,0 +1,56 @@
+{
+    "question": "Agrupa las transacciones por categoría MCC.",
+    "sql": "SELECT\n  mcc_description,\n  COUNT(*) AS total_transactions\nFROM transactions_enriched\nGROUP BY mcc_description\nORDER BY total_transactions DESC\nLIMIT 50;",
+    "safe": true,
+    "reason": "Consulta SQL de solo lectura válida.",
+    "context_documents": [
+        {
+            "id": "query-example-auto-20260518-000003",
+            "doc_type": "query_example",
+            "title": "Consulta validada: fraude por categoría de comercio",
+            "score": 0.0333
+        },
+        {
+            "id": "query-example-auto-20260518-000005",
+            "doc_type": "query_example",
+            "title": "Consulta validada: ciudades con más transacciones fraudulentas",
+            "score": 0.0328
+        },
+        {
+            "id": "column-public-transactions-mcc",
+            "doc_type": "column",
+            "title": "Columna transactions.mcc",
+            "score": 0.0328
+        },
+        {
+            "id": "table-public-mcc-codes",
+            "doc_type": "table",
+            "title": "Tabla mcc_codes",
+            "score": 0.0328
+        },
+        {
+            "id": "relationship-transactions-mcc-mcc-codes-mcc",
+            "doc_type": "relationship",
+            "title": "Relación transactions.mcc con mcc_codes.mcc",
+            "score": 0.0325
+        },
+        {
+            "id": "view-public-transactions-enriched",
+            "doc_type": "view",
+            "title": "Vista transactions_enriched",
+            "score": 0.032
+        },
+        {
+            "id": "column-public-mcc-codes-description",
+            "doc_type": "column",
+            "title": "Columna mcc_codes.description",
+            "score": 0.0312
+        },
+        {
+            "id": "column-public-mcc-codes-mcc",
+            "doc_type": "column",
+            "title": "Columna mcc_codes.mcc",
+            "score": 0.0308
+        }
+    ]
+}

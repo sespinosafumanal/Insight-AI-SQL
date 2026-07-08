@@ -1,0 +1,16 @@
+{
+    "question": "¿Cuántas transacciones fraudulentas hay?",
+    "sql": "SELECT COUNT(*) AS fraudulent_transactions\nFROM transactions\nWHERE is_fraud = true;",
+    "safe": true,
+    "columns": [
+        "fraudulent_transactions"
+    ],
+    "rows": [
+        [
+            13332
+        ]
+    ],
+    "row_format": "array",
+    "row_count": 1,
+    "attempts": []
+}

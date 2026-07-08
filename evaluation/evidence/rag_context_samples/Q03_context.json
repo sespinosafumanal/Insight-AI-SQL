@@ -1,0 +1,247 @@
+{
+    "question": "¿Cuántos usuarios hay en la base de datos?",
+    "documents": [
+        {
+            "id": "table-public-users",
+            "doc_type": "table",
+            "title": "Tabla users",
+            "content": "Tabla maestra de usuarios/clientes. Contiene datos demográficos y de ubicación de cada cliente para segmentación, análisis de comportamiento, riesgo y contexto en análisis de fraude.",
+            "table_name": "users",
+            "column_name": null,
+            "source_system": "postgresql_wsl_fraud_db",
+            "sql_dialect": "postgresql",
+            "tags": [
+                "users",
+                "customers",
+                "demographics",
+                "fraud",
+                "risk"
+            ],
+            "related_tables": [
+                "cards",
+                "transactions",
+                "transactions_enriched"
+            ],
+            "related_columns": [
+                "users.id",
+                "users.current_age",
+                "users.retirement_age",
+                "users.birth_year",
+                "users.birth_month",
+                "users.gender",
+                "users.address",
+                "users.latitude",
+                "users.longitude",
+                "users.per_capita_income",
+                "users.yearly_income",
+                "users.total_debt",
+                "users.credit_score",
+                "users.num_credit_cards"
+            ],
+            "created_at": "2026-05-18T00:00:00Z",
+            "updated_at": "2026-05-31T20:23:48.406Z",
+            "score": 0.0333
+        },
+        {
+            "id": "query-example-admin-8f46e626-9c5a-4461-a51c-44add63b806f",
+            "doc_type": "query_example",
+            "title": "Consulta validada: cuantos clientes tenemos de sexo masculino y cuantos de femenino?",
+            "content": "Pregunta del usuario: cuantos clientes tenemos de sexo masculino y cuantos de femenino? SQL validada: SELECT gender, COUNT(*) AS total_clients\nFROM users\nWHERE gender IN ('Male', 'Female')\nGROUP BY gender\nORDER BY gender;",
+            "table_name": "users",
+            "column_name": null,
+            "source_system": "postgresql_wsl_fraud_db",
+            "sql_dialect": "postgresql",
+            "tags": [
+                "query_example",
+                "admin_approved",
+                "executed_successfully"
+            ],
+            "related_tables": [
+                "users"
+            ],
+            "related_columns": [],
+            "created_at": "2026-06-14T20:14:31.896Z",
+            "updated_at": "2026-06-14T20:15:09.759Z",
+            "score": 0.0328
+        },
+        {
+            "id": "categorical-values-users-gender",
+            "doc_type": "business_rule",
+            "title": "Valores posibles de users.gender",
+            "content": "La columna users.gender contiene los siguientes valores posibles: Female, Male",
+            "table_name": "users",
+            "column_name": "gender",
+            "source_system": "postgresql_wsl_fraud_db",
+            "sql_dialect": "postgresql",
+            "tags": [
+                "categorical_values",
+                "users",
+                "gender"
+            ],
+            "related_tables": [
+                "users"
+            ],
+            "related_columns": [
+                "users.gender"
+            ],
+            "created_at": "2026-05-18T18:55:48Z",
+            "updated_at": "2026-05-31T20:23:35.981Z",
+            "score": 0.0301
+        },
+        {
+            "id": "column-public-users-current-age",
+            "doc_type": "column",
+            "title": "Columna users.current_age",
+            "content": "La columna users.current_age indica la edad actual del cliente. Tipo integer en PostgreSQL. Se usa para segmentación demográfica, análisis de riesgo y comparación de fraude por grupos de edad.",
+            "table_name": "users",
+            "column_name": "current_age",
+            "source_system": "postgresql_wsl_fraud_db",
+            "sql_dialect": "postgresql",
+            "tags": [
+                "users",
+                "age",
+                "demographics",
+                "integer",
+                "risk"
+            ],
+            "related_tables": [
+                "users",
+                "cards",
+                "transactions"
+            ],
+            "related_columns": [
+                "users.id",
+                "users.gender",
+                "users.yearly_income",
+                "users.credit_score",
+                "cards.client_id",
+                "transactions.client_id"
+            ],
+            "created_at": "2026-05-18T00:00:00Z",
+            "updated_at": "2026-05-31T20:23:44.068Z",
+            "score": 0.0283
+        },
+        {
+            "id": "column-public-users-id",
+            "doc_type": "column",
+            "title": "Columna users.id",
+            "content": "La columna users.id identifica de forma única a cada usuario o cliente. Tipo integer en PostgreSQL. Se usa como clave principal para relacionar tarjetas y transacciones con el cliente.",
+            "table_name": "users",
+            "column_name": "id",
+            "source_system": "postgresql_wsl_fraud_db",
+            "sql_dialect": "postgresql",
+            "tags": [
+                "users",
+                "identifier",
+                "integer",
+                "primary_key",
+                "customer"
+            ],
+            "related_tables": [
+                "users",
+                "cards",
+                "transactions"
+            ],
+            "related_columns": [
+                "users.current_age",
+                "users.gender",
+                "users.yearly_income",
+                "users.credit_score",
+                "cards.client_id",
+                "transactions.client_id"
+            ],
+            "created_at": "2026-05-18T00:00:00Z",
+            "updated_at": "2026-05-31T20:23:43.778Z",
+            "score": 0.0275
+        },
+        {
+            "id": "column-public-users-total-debt",
+            "doc_type": "column",
+            "title": "Columna users.total_debt",
+            "content": "La columna users.total_debt registra la deuda total del cliente. Tipo numeric en PostgreSQL. Se usa para evaluar apalancamiento, capacidad de pago y posibles señales de riesgo o comportamiento fraudulento.",
+            "table_name": "users",
+            "column_name": "total_debt",
+            "source_system": "postgresql_wsl_fraud_db",
+            "sql_dialect": "postgresql",
+            "tags": [
+                "users",
+                "debt",
+                "numeric",
+                "risk",
+                "finance"
+            ],
+            "related_tables": [
+                "users",
+                "cards",
+                "transactions"
+            ],
+            "related_columns": [
+                "users.id",
+                "users.current_age",
+                "users.yearly_income",
+                "users.credit_score",
+                "cards.client_id",
+                "transactions.client_id"
+            ],
+            "created_at": "2026-05-18T00:00:00Z",
+            "updated_at": "2026-05-31T20:23:44.934Z",
+            "score": 0.0274
+        },
+        {
+            "id": "column-public-users-gender",
+            "doc_type": "column",
+            "title": "Columna users.gender",
+            "content": "La columna users.gender contiene el género del cliente. Tipo text en PostgreSQL. Se usa para análisis demográfico, segmentación y estudio de diferencias de comportamiento o fraude por categoría de género.",
+            "table_name": "users",
+            "column_name": "gender",
+            "source_system": "postgresql_wsl_fraud_db",
+            "sql_dialect": "postgresql",
+            "tags": [
+                "users",
+                "gender",
+                "demographics",
+                "text",
+                "segmentation"
+            ],
+            "related_tables": [
+                "users",
+                "cards",
+                "transactions"
+            ],
+            "related_columns": [
+                "users.id",
+                "users.current_age",
+                "users.yearly_income",
+                "users.credit_score",
+                "cards.client_id",
+                "transactions.client_id"
+            ],
+            "created_at": "2026-05-18T00:00:00Z",
+            "updated_at": "2026-05-31T20:23:44.232Z",
+            "score": 0.027
+        },
+        {
+            "id": "query-example-admin-5bd38279-5922-4bda-beb3-a3743bc0664f",
+            "doc_type": "query_example",
+            "title": "Consulta validada: ¿Cuál es la tasa global de tarjetas expuestas en la Dark Web en toda la base de ",
+            "content": "Pregunta del usuario: ¿Cuál es la tasa global de tarjetas expuestas en la Dark Web en toda la base de datos? SQL validada: SELECT ROUND(100.0 * SUM(CASE WHEN card_on_dark_web = 'No' THEN 0 ELSE 1 END) / COUNT(*), 2) AS dark_web_exposure_rate_percent\nFROM cards;",
+            "table_name": "cards",
+            "column_name": null,
+            "source_system": "postgresql_wsl_fraud_db",
+            "sql_dialect": "postgresql",
+            "tags": [
+                "query_example",
+                "admin_approved",
+                "executed_successfully"
+            ],
+            "related_tables": [
+                "cards"
+            ],
+            "related_columns": [],
+            "created_at": "2026-06-17T17:32:16.248Z",
+            "updated_at": "2026-06-17T17:42:43.477Z",
+            "score": 0.0167
+        }
+    ],
+    "document_count": 8
+}

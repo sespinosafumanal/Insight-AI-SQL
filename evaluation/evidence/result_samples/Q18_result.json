@@ -1,0 +1,65 @@
+{
+    "question": "¿Qué categorías de comercio presentan mayor importe medio por transacción?",
+    "sql": "SELECT\n  mcc_description,\n  ROUND(AVG(amount), 2) AS average_transaction_amount,\n  COUNT(*) AS total_transactions\nFROM transactions_enriched\nGROUP BY mcc_description\nHAVING COUNT(*) > 100\nORDER BY average_transaction_amount DESC\nLIMIT 10;",
+    "safe": true,
+    "columns": [
+        "mcc_description",
+        "average_transaction_amount",
+        "total_transactions"
+    ],
+    "rows": [
+        [
+            "Cruise Lines",
+            1551.42,
+            428
+        ],
+        [
+            "Steel Drums and Barrels",
+            797.89,
+            384
+        ],
+        [
+            "Fabricated Structural Metal Products",
+            786.94,
+            408
+        ],
+        [
+            "Miscellaneous Fabricated Metal Products",
+            786.78,
+            351
+        ],
+        [
+            "Coated and Laminated Products",
+            785.08,
+            381
+        ],
+        [
+            "Bolt, Nut, Screw, Rivet Manufacturing",
+            761.1,
+            337
+        ],
+        [
+            "Floor Covering Stores",
+            758.88,
+            334
+        ],
+        [
+            "Miscellaneous Metal Fabrication",
+            757.54,
+            391
+        ],
+        [
+            "Tools, Parts, Supplies Manufacturing",
+            734.31,
+            3084
+        ],
+        [
+            "Leather Goods",
+            733.86,
+            2822
+        ]
+    ],
+    "row_format": "array",
+    "row_count": 10,
+    "attempts": []
+}

@@ -1,0 +1,56 @@
+{
+    "question": "¿Qué categorías de comercio tienen mayor importe total transaccionado?",
+    "sql": "SELECT\n  COALESCE(te.mcc_description, mc.description) AS mcc_description,\n  SUM(t.amount) AS total_amount_transacted\nFROM transactions t\nLEFT JOIN transactions_enriched te\n  ON t.id = te.id\nLEFT JOIN mcc_codes mc\n  ON t.mcc = mc.mcc\nGROUP BY COALESCE(te.mcc_description, mc.description)\nORDER BY total_amount_transacted DESC\nLIMIT 50;",
+    "safe": true,
+    "reason": "Consulta SQL de solo lectura válida.",
+    "context_documents": [
+        {
+            "id": "table-public-transactions",
+            "doc_type": "table",
+            "title": "Tabla transactions",
+            "score": 0.0333
+        },
+        {
+            "id": "query-example-auto-20260518-000003",
+            "doc_type": "query_example",
+            "title": "Consulta validada: fraude por categoría de comercio",
+            "score": 0.0331
+        },
+        {
+            "id": "query-example-auto-20260518-000005",
+            "doc_type": "query_example",
+            "title": "Consulta validada: ciudades con más transacciones fraudulentas",
+            "score": 0.032
+        },
+        {
+            "id": "column-public-transactions-amount",
+            "doc_type": "column",
+            "title": "Columna transactions.amount",
+            "score": 0.032
+        },
+        {
+            "id": "relationship-transactions-mcc-mcc-codes-mcc",
+            "doc_type": "relationship",
+            "title": "Relación transactions.mcc con mcc_codes.mcc",
+            "score": 0.0318
+        },
+        {
+            "id": "column-public-transactions-merchant-city",
+            "doc_type": "column",
+            "title": "Columna transactions.merchant_city",
+            "score": 0.0312
+        },
+        {
+            "id": "column-public-transactions-mcc",
+            "doc_type": "column",
+            "title": "Columna transactions.mcc",
+            "score": 0.0299
+        },
+        {
+            "id": "column-public-transactions-merchant-state",
+            "doc_type": "column",
+            "title": "Columna transactions.merchant_state",
+            "score": 0.0299
+        }
+    ]
+}

@@ -1,0 +1,56 @@
+{
+    "question": "¿Cuál es la transacción de mayor importe?",
+    "sql": "SELECT *\nFROM transactions\nORDER BY amount DESC\nLIMIT 1;",
+    "safe": true,
+    "reason": "Consulta SQL de solo lectura válida.",
+    "context_documents": [
+        {
+            "id": "column-public-transactions-amount",
+            "doc_type": "column",
+            "title": "Columna transactions.amount",
+            "score": 0.0328
+        },
+        {
+            "id": "table-public-transactions",
+            "doc_type": "table",
+            "title": "Tabla transactions",
+            "score": 0.0325
+        },
+        {
+            "id": "query-example-auto-20260518-000003",
+            "doc_type": "query_example",
+            "title": "Consulta validada: fraude por categoría de comercio",
+            "score": 0.0321
+        },
+        {
+            "id": "column-public-transactions-id",
+            "doc_type": "column",
+            "title": "Columna transactions.id",
+            "score": 0.0315
+        },
+        {
+            "id": "categorical-values-transactions-use_chip",
+            "doc_type": "business_rule",
+            "title": "Valores posibles de transactions.use_chip",
+            "score": 0.0315
+        },
+        {
+            "id": "column-public-transactions-card-id",
+            "doc_type": "column",
+            "title": "Columna transactions.card_id",
+            "score": 0.0306
+        },
+        {
+            "id": "table-public-fraud-labels",
+            "doc_type": "table",
+            "title": "Tabla fraud_labels",
+            "score": 0.0295
+        },
+        {
+            "id": "query-example-admin-5bd38279-5922-4bda-beb3-a3743bc0664f",
+            "doc_type": "query_example",
+            "title": "Consulta validada: ¿Cuál es la tasa global de tarjetas expuestas en la Dark Web en toda la base de ",
+            "score": 0.0167
+        }
+    ]
+}

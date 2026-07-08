@@ -1,0 +1,16 @@
+{
+    "question": "¿Qué porcentaje de transacciones son fraudulentas?",
+    "sql": "SELECT ROUND(100.0 * SUM(CASE WHEN is_fraud THEN 1 ELSE 0 END) / COUNT(*), 2) AS fraud_rate_percent\nFROM transactions;",
+    "safe": true,
+    "columns": [
+        "fraud_rate_percent"
+    ],
+    "rows": [
+        [
+            0.1
+        ]
+    ],
+    "row_format": "array",
+    "row_count": 1,
+    "attempts": []
+}

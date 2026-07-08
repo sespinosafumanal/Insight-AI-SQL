@@ -1,0 +1,33 @@
+# Entorno Virtual Python
+.venv/
+venv/
+env/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Archivos de Entorno
+.env
+.env.*
+
+# Bases de datos locales
+data/*.db
+data/*.db-journal
+data/*.db-wal
+data/*.db-shm
+
+# Archivos autogenerados / Pruebas temporales
+output.html
+test.html
+downloaded_admin.js
+evaluation/results/
+
+# IDEs y Editores
+.vscode/
+.idea/
+*.swp
+
+# Archivos del Sistema Operativo
+.DS_Store
+Thumbs.db

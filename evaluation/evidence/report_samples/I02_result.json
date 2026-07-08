@@ -1,0 +1,785 @@
+{
+    "status": "completed",
+    "report_title": "Comportamiento general de las transacciones",
+    "user_request": "Genera un informe sobre el comportamiento general de las transacciones.",
+    "audience": "dirección",
+    "period": null,
+    "section_count": 6,
+    "completed_sections": 6,
+    "failed_sections": 0,
+    "rejected_sections": 0,
+    "sections": [
+        {
+            "id": "I02_sec1",
+            "title": "Métricas globales históricas",
+            "question": "Extrae conteo total, promedio de importe, suma de importe y tasa de fraude global de todas las transacciones.",
+            "priority": "required",
+            "status": "completed",
+            "safe": true,
+            "generation_mode": "generated_sql",
+            "columns": [
+                "total_transactions",
+                "average_amount",
+                "total_amount",
+                "fraud_rate_percent"
+            ],
+            "row_count": 1,
+            "returned_row_count": 1,
+            "row_format": "array",
+            "sql": "SELECT\n  COUNT(*) AS total_transactions,\n  AVG(amount) AS average_amount,\n  SUM(amount) AS total_amount,\n  ROUND(100.0 * SUM(CASE WHEN is_fraud THEN 1 ELSE 0 END) / COUNT(*), 2) AS fraud_rate_percent\nFROM transactions;",
+            "rows": [
+                [
+                    13305915,
+                    42.97603902324643,
+                    571835522.28,
+                    0.1
+                ]
+            ],
+            "context_documents": [
+                {
+                    "id": "table-public-transactions",
+                    "doc_type": "table",
+                    "title": "Tabla transactions",
+                    "score": 0.0333
+                },
+                {
+                    "id": "query-example-auto-20260518-000003",
+                    "doc_type": "query_example",
+                    "title": "Consulta validada: fraude por categoría de comercio",
+                    "score": 0.0331
+                },
+                {
+                    "id": "column-public-transactions-amount",
+                    "doc_type": "column",
+                    "title": "Columna transactions.amount",
+                    "score": 0.0328
+                },
+                {
+                    "id": "query-example-auto-20260518-000002",
+                    "doc_type": "query_example",
+                    "title": "Consulta validada: fraude por tipo de tarjeta",
+                    "score": 0.0323
+                },
+                {
+                    "id": "table-public-cards",
+                    "doc_type": "table",
+                    "title": "Tabla cards",
+                    "score": 0.0313
+                },
+                {
+                    "id": "column-public-users-total-debt",
+                    "doc_type": "column",
+                    "title": "Columna users.total_debt",
+                    "score": 0.0295
+                },
+                {
+                    "id": "categorical-values-transactions-is_fraud",
+                    "doc_type": "business_rule",
+                    "title": "Valores posibles de transactions.is_fraud",
+                    "score": 0.0292
+                },
+                {
+                    "id": "table-public-fraud-labels",
+                    "doc_type": "table",
+                    "title": "Tabla fraud_labels",
+                    "score": 0.0289
+                }
+            ]
+        },
+        {
+            "id": "I02_sec2",
+            "title": "Transacciones por año",
+            "question": "Agrupa las transacciones por el año de la fecha (date) mostrando volumen y tasa de fraude.",
+            "priority": "required",
+            "status": "completed",
+            "safe": true,
+            "generation_mode": "generated_sql",
+            "columns": [
+                "year",
+                "total_transactions",
+                "fraudulent_transactions",
+                "fraud_rate_percent"
+            ],
+            "row_count": 10,
+            "returned_row_count": 10,
+            "row_format": "array",
+            "sql": "SELECT\n  DATE_TRUNC('year', date) AS year,\n  COUNT(*) AS total_transactions,\n  SUM(CASE WHEN is_fraud THEN 1 ELSE 0 END) AS fraudulent_transactions,\n  ROUND(100.0 * SUM(CASE WHEN is_fraud THEN 1 ELSE 0 END) / COUNT(*), 2) AS fraud_rate_percent\nFROM transactions\nGROUP BY DATE_TRUNC('year', date)\nORDER BY year;",
+            "rows": [
+                [
+                    "2010-01-01T00:00:00",
+                    1240880,
+                    2573,
+                    0.21
+                ],
+                [
+                    "2011-01-01T00:00:00",
+                    1290770,
+                    37,
+                    0.0
+                ],
+                [
+                    "2012-01-01T00:00:00",
+                    1321672,
+                    923,
+                    0.07
+                ],
+                [
+                    "2013-01-01T00:00:00",
+                    1352808,
+                    1337,
+                    0.1
+                ],
+                [
+                    "2014-01-01T00:00:00",
+                    1365537,
+                    664,
+                    0.05
+                ],
+                [
+                    "2015-01-01T00:00:00",
+                    1388065,
+                    2189,
+                    0.16
+                ],
+                [
+                    "2016-01-01T00:00:00",
+                    1392117,
+                    2448,
+                    0.18
+                ],
+                [
+                    "2017-01-01T00:00:00",
+                    1399308,
+                    172,
+                    0.01
+                ],
+                [
+                    "2018-01-01T00:00:00",
+                    1394792,
+                    1629,
+                    0.12
+                ],
+                [
+                    "2019-01-01T00:00:00",
+                    1159966,
+                    1360,
+                    0.12
+                ]
+            ],
+            "context_documents": [
+                {
+                    "id": "table-public-transactions",
+                    "doc_type": "table",
+                    "title": "Tabla transactions",
+                    "score": 0.0333
+                },
+                {
+                    "id": "query-example-auto-20260518-000001",
+                    "doc_type": "query_example",
+                    "title": "Consulta validada: volumen total de transacciones y fraude",
+                    "score": 0.0331
+                },
+                {
+                    "id": "column-public-transactions-date",
+                    "doc_type": "column",
+                    "title": "Columna transactions.date",
+                    "score": 0.0325
+                },
+                {
+                    "id": "query-example-auto-20260518-000004",
+                    "doc_type": "query_example",
+                    "title": "Consulta validada: evolución mensual del fraude",
+                    "score": 0.0323
+                },
+                {
+                    "id": "table-public-fraud-labels",
+                    "doc_type": "table",
+                    "title": "Tabla fraud_labels",
+                    "score": 0.032
+                },
+                {
+                    "id": "column-public-transactions-amount",
+                    "doc_type": "column",
+                    "title": "Columna transactions.amount",
+                    "score": 0.032
+                },
+                {
+                    "id": "table-public-cards",
+                    "doc_type": "table",
+                    "title": "Tabla cards",
+                    "score": 0.0291
+                },
+                {
+                    "id": "categorical-values-transactions-is_fraud",
+                    "doc_type": "business_rule",
+                    "title": "Valores posibles de transactions.is_fraud",
+                    "score": 0.0265
+                }
+            ]
+        },
+        {
+            "id": "I02_sec3",
+            "title": "Volumen por tipo de tarjeta",
+            "question": "Cruza transactions con cards y agrupa el volumen y suma de importe por el tipo de tarjeta (card_type).",
+            "priority": "required",
+            "status": "completed",
+            "safe": true,
+            "generation_mode": "generated_sql",
+            "columns": [
+                "card_type",
+                "total_transactions",
+                "total_amount"
+            ],
+            "row_count": 3,
+            "returned_row_count": 3,
+            "row_format": "array",
+            "sql": "SELECT\n  c.card_type,\n  COUNT(*) AS total_transactions,\n  SUM(t.amount) AS total_amount\nFROM transactions t\nJOIN cards c\n  ON t.card_id = c.id\nGROUP BY c.card_type\nORDER BY total_amount DESC\nLIMIT 50;",
+            "rows": [
+                [
+                    "Debit",
+                    8280996,
+                    326091498.38
+                ],
+                [
+                    "Credit",
+                    4109189,
+                    225811820.01
+                ],
+                [
+                    "Debit (Prepaid)",
+                    915730,
+                    19932203.89
+                ]
+            ],
+            "context_documents": [
+                {
+                    "id": "query-example-auto-20260518-000002",
+                    "doc_type": "query_example",
+                    "title": "Consulta validada: fraude por tipo de tarjeta",
+                    "score": 0.0333
+                },
+                {
+                    "id": "table-public-transactions",
+                    "doc_type": "table",
+                    "title": "Tabla transactions",
+                    "score": 0.0333
+                },
+                {
+                    "id": "column-public-cards-card-type",
+                    "doc_type": "column",
+                    "title": "Columna cards.card_type",
+                    "score": 0.032
+                },
+                {
+                    "id": "column-public-transactions-amount",
+                    "doc_type": "column",
+                    "title": "Columna transactions.amount",
+                    "score": 0.032
+                },
+                {
+                    "id": "relationship-transactions-card-id-cards-id",
+                    "doc_type": "relationship",
+                    "title": "Relación transactions.card_id con cards.id",
+                    "score": 0.0318
+                },
+                {
+                    "id": "query-example-auto-20260518-000003",
+                    "doc_type": "query_example",
+                    "title": "Consulta validada: fraude por categoría de comercio",
+                    "score": 0.0315
+                },
+                {
+                    "id": "categorical-values-cards-card_type",
+                    "doc_type": "business_rule",
+                    "title": "Valores posibles de cards.card_type",
+                    "score": 0.0313
+                },
+                {
+                    "id": "table-public-cards",
+                    "doc_type": "table",
+                    "title": "Tabla cards",
+                    "score": 0.0301
+                }
+            ]
+        },
+        {
+            "id": "I02_sec4",
+            "title": "Desglose por método de pago",
+            "question": "Agrupa el volumen de transacciones por método de uso (use_chip).",
+            "priority": "required",
+            "status": "completed",
+            "safe": true,
+            "generation_mode": "generated_sql",
+            "columns": [
+                "use_chip",
+                "total_transactions"
+            ],
+            "row_count": 3,
+            "returned_row_count": 3,
+            "row_format": "array",
+            "sql": "SELECT use_chip, COUNT(*) AS total_transactions\nFROM transactions\nGROUP BY use_chip\nORDER BY total_transactions DESC\nLIMIT 50;",
+            "rows": [
+                [
+                    "Swipe Transaction",
+                    6967185
+                ],
+                [
+                    "Chip Transaction",
+                    4780818
+                ],
+                [
+                    "Online Transaction",
+                    1557912
+                ]
+            ],
+            "context_documents": [
+                {
+                    "id": "query-example-auto-20260518-000001",
+                    "doc_type": "query_example",
+                    "title": "Consulta validada: volumen total de transacciones y fraude",
+                    "score": 0.0333
+                },
+                {
+                    "id": "categorical-values-transactions-use_chip",
+                    "doc_type": "business_rule",
+                    "title": "Valores posibles de transactions.use_chip",
+                    "score": 0.0333
+                },
+                {
+                    "id": "query-example-auto-20260518-000003",
+                    "doc_type": "query_example",
+                    "title": "Consulta validada: fraude por categoría de comercio",
+                    "score": 0.0323
+                },
+                {
+                    "id": "table-public-transactions",
+                    "doc_type": "table",
+                    "title": "Tabla transactions",
+                    "score": 0.0323
+                },
+                {
+                    "id": "table-public-cards",
+                    "doc_type": "table",
+                    "title": "Tabla cards",
+                    "score": 0.032
+                },
+                {
+                    "id": "column-public-transactions-amount",
+                    "doc_type": "column",
+                    "title": "Columna transactions.amount",
+                    "score": 0.0318
+                },
+                {
+                    "id": "column-public-transactions-mcc",
+                    "doc_type": "column",
+                    "title": "Columna transactions.mcc",
+                    "score": 0.0308
+                },
+                {
+                    "id": "table-public-fraud-labels",
+                    "doc_type": "table",
+                    "title": "Tabla fraud_labels",
+                    "score": 0.0299
+                }
+            ]
+        },
+        {
+            "id": "I02_sec5",
+            "title": "Top 10 transacciones más altas",
+            "question": "Extrae el detalle de las 10 transacciones individuales con mayor importe (amount).",
+            "priority": "required",
+            "status": "completed",
+            "safe": true,
+            "generation_mode": "generated_sql",
+            "columns": [
+                "id",
+                "date",
+                "client_id",
+                "card_id",
+                "amount",
+                "use_chip",
+                "merchant_id",
+                "merchant_city",
+                "merchant_state",
+                "zip",
+                "mcc",
+                "errors",
+                "is_fraud"
+            ],
+            "row_count": 10,
+            "returned_row_count": 10,
+            "row_format": "array",
+            "sql": "SELECT id, date, client_id, card_id, amount, use_chip, merchant_id, merchant_city, merchant_state, zip, mcc, errors, is_fraud\nFROM transactions\nORDER BY amount DESC\nLIMIT 10;",
+            "rows": [
+                [
+                    8544734,
+                    "2010-09-22T06:37:00",
+                    708,
+                    5165,
+                    6820.2,
+                    "Swipe Transaction",
+                    34524,
+                    "Staten Island",
+                    "NY",
+                    "10302.0",
+                    5712,
+                    null,
+                    null
+                ],
+                [
+                    22453398,
+                    "2019-01-27T17:52:00",
+                    1081,
+                    3427,
+                    6613.44,
+                    "Online Transaction",
+                    9026,
+                    "ONLINE",
+                    null,
+                    null,
+                    4411,
+                    null,
+                    false
+                ],
+                [
+                    10973185,
+                    "2012-04-10T11:05:00",
+                    1259,
+                    5406,
+                    5913.37,
+                    "Swipe Transaction",
+                    85983,
+                    "Wilton",
+                    "CT",
+                    "6897.0",
+                    5932,
+                    null,
+                    null
+                ],
+                [
+                    12783563,
+                    "2013-05-22T17:28:00",
+                    1487,
+                    4946,
+                    5813.78,
+                    "Online Transaction",
+                    9026,
+                    "ONLINE",
+                    null,
+                    null,
+                    4411,
+                    null,
+                    null
+                ],
+                [
+                    15155601,
+                    "2014-10-24T13:11:00",
+                    278,
+                    5619,
+                    5696.78,
+                    "Online Transaction",
+                    7202,
+                    "ONLINE",
+                    null,
+                    null,
+                    4411,
+                    null,
+                    false
+                ],
+                [
+                    8473892,
+                    "2010-09-05T08:14:00",
+                    1699,
+                    2204,
+                    5694.44,
+                    "Online Transaction",
+                    9026,
+                    "ONLINE",
+                    null,
+                    null,
+                    4411,
+                    null,
+                    null
+                ],
+                [
+                    21211758,
+                    "2018-05-09T17:38:00",
+                    1156,
+                    175,
+                    5682.22,
+                    "Online Transaction",
+                    9026,
+                    "ONLINE",
+                    null,
+                    null,
+                    4411,
+                    null,
+                    null
+                ],
+                [
+                    15245857,
+                    "2014-11-13T10:27:00",
+                    1259,
+                    5406,
+                    5654.5,
+                    "Swipe Transaction",
+                    76639,
+                    "Stamford",
+                    "CT",
+                    "6907.0",
+                    5732,
+                    null,
+                    null
+                ],
+                [
+                    22383851,
+                    "2019-01-13T07:09:00",
+                    708,
+                    5621,
+                    5591.73,
+                    "Chip Transaction",
+                    84324,
+                    "New York",
+                    "NY",
+                    "10069.0",
+                    5712,
+                    null,
+                    false
+                ],
+                [
+                    20412330,
+                    "2017-11-21T09:19:00",
+                    742,
+                    3943,
+                    5155.36,
+                    "Online Transaction",
+                    7202,
+                    "ONLINE",
+                    null,
+                    null,
+                    4411,
+                    null,
+                    false
+                ]
+            ],
+            "context_documents": [
+                {
+                    "id": "query-example-auto-20260518-000003",
+                    "doc_type": "query_example",
+                    "title": "Consulta validada: fraude por categoría de comercio",
+                    "score": 0.0333
+                },
+                {
+                    "id": "column-public-transactions-amount",
+                    "doc_type": "column",
+                    "title": "Columna transactions.amount",
+                    "score": 0.0331
+                },
+                {
+                    "id": "query-example-auto-20260518-000005",
+                    "doc_type": "query_example",
+                    "title": "Consulta validada: ciudades con más transacciones fraudulentas",
+                    "score": 0.0328
+                },
+                {
+                    "id": "table-public-transactions",
+                    "doc_type": "table",
+                    "title": "Tabla transactions",
+                    "score": 0.0325
+                },
+                {
+                    "id": "relationship-transactions-client-id-users-id",
+                    "doc_type": "relationship",
+                    "title": "Relación transactions.client_id con users.id",
+                    "score": 0.032
+                },
+                {
+                    "id": "relationship-transactions-card-id-cards-id",
+                    "doc_type": "relationship",
+                    "title": "Relación transactions.card_id con cards.id",
+                    "score": 0.0305
+                },
+                {
+                    "id": "table-public-fraud-labels",
+                    "doc_type": "table",
+                    "title": "Tabla fraud_labels",
+                    "score": 0.0304
+                },
+                {
+                    "id": "view-public-transactions-enriched",
+                    "doc_type": "view",
+                    "title": "Vista transactions_enriched",
+                    "score": 0.0301
+                }
+            ]
+        },
+        {
+            "id": "I02_sec6",
+            "title": "Errores técnicos comunes",
+            "question": "Agrupa y cuenta las transacciones por tipo de error (errors) excluyendo los registros sin error.",
+            "priority": "required",
+            "status": "completed",
+            "safe": true,
+            "generation_mode": "generated_sql",
+            "columns": [
+                "errors",
+                "total_transactions"
+            ],
+            "row_count": 22,
+            "returned_row_count": 22,
+            "row_format": "array",
+            "sql": "SELECT\n  errors,\n  COUNT(*) AS total_transactions\nFROM transactions\nWHERE errors IS NOT NULL\n  AND errors <> ''\nGROUP BY errors\nORDER BY total_transactions DESC\nLIMIT 50;",
+            "rows": [
+                [
+                    "Insufficient Balance",
+                    130902
+                ],
+                [
+                    "Bad PIN",
+                    32119
+                ],
+                [
+                    "Technical Glitch",
+                    26271
+                ],
+                [
+                    "Bad Card Number",
+                    7767
+                ],
+                [
+                    "Bad Expiration",
+                    6161
+                ],
+                [
+                    "Bad CVV",
+                    6106
+                ],
+                [
+                    "Bad Zipcode",
+                    1126
+                ],
+                [
+                    "Bad PIN,Insufficient Balance",
+                    293
+                ],
+                [
+                    "Insufficient Balance,Technical Glitch",
+                    243
+                ],
+                [
+                    "Bad Card Number,Insufficient Balance",
+                    71
+                ],
+                [
+                    "Bad PIN,Technical Glitch",
+                    70
+                ],
+                [
+                    "Bad CVV,Insufficient Balance",
+                    57
+                ],
+                [
+                    "Bad Expiration,Insufficient Balance",
+                    47
+                ],
+                [
+                    "Bad Card Number,Bad CVV",
+                    38
+                ],
+                [
+                    "Bad Card Number,Bad Expiration",
+                    33
+                ],
+                [
+                    "Bad Expiration,Bad CVV",
+                    32
+                ],
+                [
+                    "Bad Expiration,Technical Glitch",
+                    21
+                ],
+                [
+                    "Bad Card Number,Technical Glitch",
+                    15
+                ],
+                [
+                    "Bad CVV,Technical Glitch",
+                    8
+                ],
+                [
+                    "Bad Zipcode,Insufficient Balance",
+                    7
+                ],
+                [
+                    "Bad Zipcode,Technical Glitch",
+                    5
+                ],
+                [
+                    "Bad Card Number,Bad Expiration,Insufficient Balance",
+                    1
+                ]
+            ],
+            "context_documents": [
+                {
+                    "id": "query-example-auto-20260518-000003",
+                    "doc_type": "query_example",
+                    "title": "Consulta validada: fraude por categoría de comercio",
+                    "score": 0.0333
+                },
+                {
+                    "id": "categorical-values-transactions-errors",
+                    "doc_type": "business_rule",
+                    "title": "Valores posibles de transactions.errors",
+                    "score": 0.0328
+                },
+                {
+                    "id": "query-example-auto-20260518-000002",
+                    "doc_type": "query_example",
+                    "title": "Consulta validada: fraude por tipo de tarjeta",
+                    "score": 0.0325
+                },
+                {
+                    "id": "column-public-transactions-id",
+                    "doc_type": "column",
+                    "title": "Columna transactions.id",
+                    "score": 0.0315
+                },
+                {
+                    "id": "table-public-transactions",
+                    "doc_type": "table",
+                    "title": "Tabla transactions",
+                    "score": 0.0301
+                },
+                {
+                    "id": "table-public-fraud-labels",
+                    "doc_type": "table",
+                    "title": "Tabla fraud_labels",
+                    "score": 0.0289
+                },
+                {
+                    "id": "column-public-transactions-amount",
+                    "doc_type": "column",
+                    "title": "Columna transactions.amount",
+                    "score": 0.0269
+                },
+                {
+                    "id": "column-public-transactions-card-id",
+                    "doc_type": "column",
+                    "title": "Columna transactions.card_id",
+                    "score": 0.0266
+                }
+            ]
+        }
+    ],
+    "global_warnings": [
+        "No se ha indicado un periodo explícito. Las preguntas generadas por el agente deben incluir el periodo deseado si es relevante para el informe."
+    ],
+    "agent_instructions": [
+        "Redacta el informe final usando únicamente los datos devueltos en sections.",
+        "No inventes métricas, porcentajes ni conclusiones que no estén soportadas por los resultados.",
+        "Si una sección aparece como failed o rejected, menciónalo como limitación.",
+        "Si hay global_warnings, tenlas en cuenta al redactar el informe.",
+        "No incluyas SQL en las secciones; solo aporta questions.",
+        "Incluye el SQL solo si el usuario lo solicita o si es necesario para trazabilidad."
+    ]
+}

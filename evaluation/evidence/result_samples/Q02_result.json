@@ -1,0 +1,54 @@
+{
+    "question": "Muéstrame las 10 transacciones con mayor importe.",
+    "sql": "SELECT id, amount\nFROM transactions\nORDER BY amount DESC\nLIMIT 10;",
+    "safe": true,
+    "columns": [
+        "id",
+        "amount"
+    ],
+    "rows": [
+        [
+            8544734,
+            6820.2
+        ],
+        [
+            22453398,
+            6613.44
+        ],
+        [
+            10973185,
+            5913.37
+        ],
+        [
+            12783563,
+            5813.78
+        ],
+        [
+            15155601,
+            5696.78
+        ],
+        [
+            8473892,
+            5694.44
+        ],
+        [
+            21211758,
+            5682.22
+        ],
+        [
+            15245857,
+            5654.5
+        ],
+        [
+            22383851,
+            5591.73
+        ],
+        [
+            20412330,
+            5155.36
+        ]
+    ],
+    "row_format": "array",
+    "row_count": 10,
+    "attempts": []
+}

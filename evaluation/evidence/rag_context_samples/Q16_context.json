@@ -1,0 +1,266 @@
+{
+    "question": "¿Cuál es el importe medio de las transacciones fraudulentas frente a las no fraudulentas?",
+    "documents": [
+        {
+            "id": "query-example-auto-20260518-000001",
+            "doc_type": "query_example",
+            "title": "Consulta validada: volumen total de transacciones y fraude",
+            "content": "Pregunta del usuario: ¿Cuál es el volumen total de transacciones y qué porcentaje son fraudulentas? SQL validada: SELECT COUNT(*) AS total_transactions, SUM(CASE WHEN is_fraud THEN 1 ELSE 0 END) AS fraudulent_transactions, ROUND(100.0 * SUM(CASE WHEN is_fraud THEN 1 ELSE 0 END) / COUNT(*), 2) AS fraud_rate_percent FROM transactions;",
+            "table_name": "transactions",
+            "column_name": null,
+            "source_system": "postgresql_wsl_fraud_db",
+            "sql_dialect": "postgresql",
+            "tags": [
+                "query_example",
+                "fraud",
+                "transactions",
+                "summary",
+                "auto_generated",
+                "executed_successfully"
+            ],
+            "related_tables": [
+                "transactions"
+            ],
+            "related_columns": [
+                "transactions.id",
+                "transactions.is_fraud"
+            ],
+            "created_at": "2026-05-18T00:00:00Z",
+            "updated_at": "2026-05-31T20:23:45.878Z",
+            "score": 0.0333
+        },
+        {
+            "id": "table-public-fraud-labels",
+            "doc_type": "table",
+            "title": "Tabla fraud_labels",
+            "content": "Tabla auxiliar de etiquetas de fraude por transacción. Contiene una fila por transaction_id con el indicador is_fraud asociado. Se usa como referencia para supervisión del fraude, validación de etiquetas y análisis comparativo frente a la tabla transactions.",
+            "table_name": "fraud_labels",
+            "column_name": null,
+            "source_system": "postgresql_wsl_fraud_db",
+            "sql_dialect": "postgresql",
+            "tags": [
+                "fraud",
+                "labels",
+                "transactions",
+                "boolean",
+                "reference"
+            ],
+            "related_tables": [
+                "transactions"
+            ],
+            "related_columns": [
+                "fraud_labels.transaction_id",
+                "fraud_labels.is_fraud",
+                "transactions.id",
+                "transactions.is_fraud"
+            ],
+            "created_at": "2026-05-18T00:00:00Z",
+            "updated_at": "2026-05-31T20:23:49.018Z",
+            "score": 0.0325
+        },
+        {
+            "id": "column-public-transactions-amount",
+            "doc_type": "column",
+            "title": "Columna transactions.amount",
+            "content": "La columna transactions.amount registra el importe de la transacción. Tipo numeric en PostgreSQL. Se usa para análisis de volumen, ticket medio, detección de importes anómalos y comparación entre clientes, tarjetas o comercios.",
+            "table_name": "transactions",
+            "column_name": "amount",
+            "source_system": "postgresql_wsl_fraud_db",
+            "sql_dialect": "postgresql",
+            "tags": [
+                "transactions",
+                "amount",
+                "numeric",
+                "payments",
+                "fraud"
+            ],
+            "related_tables": [
+                "transactions",
+                "transactions_enriched"
+            ],
+            "related_columns": [
+                "transactions.id",
+                "transactions.date",
+                "transactions.client_id",
+                "transactions.card_id",
+                "transactions.mcc",
+                "transactions.is_fraud"
+            ],
+            "created_at": "2026-05-18T00:00:00Z",
+            "updated_at": "2026-05-31T20:23:40.83Z",
+            "score": 0.0323
+        },
+        {
+            "id": "categorical-values-transactions-is_fraud",
+            "doc_type": "business_rule",
+            "title": "Valores posibles de transactions.is_fraud",
+            "content": "La columna transactions.is_fraud indica si una transacción es fraudulenta. Valores posibles: false, true",
+            "table_name": "transactions",
+            "column_name": "is_fraud",
+            "source_system": "postgresql_wsl_fraud_db",
+            "sql_dialect": "postgresql",
+            "tags": [
+                "categorical_values",
+                "transactions",
+                "fraud"
+            ],
+            "related_tables": [
+                "transactions"
+            ],
+            "related_columns": [
+                "transactions.is_fraud"
+            ],
+            "created_at": "2026-05-18T18:55:48Z",
+            "updated_at": "2026-05-31T20:23:39.493Z",
+            "score": 0.0321
+        },
+        {
+            "id": "query-example-auto-20260518-000003",
+            "doc_type": "query_example",
+            "title": "Consulta validada: fraude por categoría de comercio",
+            "content": "Pregunta del usuario: ¿Cuáles son las categorías de comercio con mayor tasa de fraude? SQL validada: SELECT mcc_description, COUNT(*) AS total_transactions, SUM(CASE WHEN is_fraud THEN 1 ELSE 0 END) AS fraudulent_transactions, ROUND(100.0 * SUM(CASE WHEN is_fraud THEN 1 ELSE 0 END) / COUNT(*), 2) AS fraud_rate_percent FROM transactions_enriched GROUP BY mcc_description HAVING COUNT(*) > 100 ORDER BY fraud_rate_percent DESC LIMIT 10;",
+            "table_name": "transactions_enriched",
+            "column_name": null,
+            "source_system": "postgresql_wsl_fraud_db",
+            "sql_dialect": "postgresql",
+            "tags": [
+                "query_example",
+                "fraud",
+                "mcc",
+                "merchant_category",
+                "transactions_enriched",
+                "auto_generated",
+                "executed_successfully"
+            ],
+            "related_tables": [
+                "transactions_enriched",
+                "transactions",
+                "mcc_codes"
+            ],
+            "related_columns": [
+                "transactions_enriched.mcc_description",
+                "transactions_enriched.is_fraud",
+                "transactions_enriched.id",
+                "transactions.mcc",
+                "mcc_codes.description"
+            ],
+            "created_at": "2026-05-18T00:00:00Z",
+            "updated_at": "2026-05-31T20:23:46.455Z",
+            "score": 0.032
+        },
+        {
+            "id": "column-public-transactions-is-fraud",
+            "doc_type": "column",
+            "title": "Columna transactions.is_fraud",
+            "content": "La columna transactions.is_fraud indica si una transacción es fraudulenta. Tipo boolean en PostgreSQL. true significa transacción fraudulenta y false significa transacción no fraudulenta. Debe usarse para calcular tasas de fraude, número de fraudes y comparativas entre categorías de comercio, tarjetas, clientes o periodos temporales.",
+            "table_name": "transactions",
+            "column_name": "is_fraud",
+            "source_system": "postgresql_wsl_fraud_db",
+            "sql_dialect": "postgresql",
+            "tags": [
+                "fraud",
+                "boolean",
+                "transactions",
+                "risk"
+            ],
+            "related_tables": [
+                "transactions",
+                "transactions_enriched",
+                "fraud_labels"
+            ],
+            "related_columns": [
+                "transactions.id",
+                "transactions.amount",
+                "transactions.date",
+                "transactions.mcc",
+                "fraud_labels.is_fraud"
+            ],
+            "created_at": "2026-05-18T00:00:00Z",
+            "updated_at": "2026-05-31T20:23:41.466Z",
+            "score": 0.0315
+        },
+        {
+            "id": "table-public-transactions",
+            "doc_type": "table",
+            "title": "Tabla transactions",
+            "content": "Tabla principal de transacciones con tarjeta. Contiene una fila por transacción, con fecha, cliente, tarjeta, importe, comercio, ciudad, estado, código MCC, errores e indicador booleano de fraude. Usar esta tabla para análisis de volumen transaccional, fraude, importes, evolución temporal y comportamiento por comercio.",
+            "table_name": "transactions",
+            "column_name": null,
+            "source_system": "postgresql_wsl_fraud_db",
+            "sql_dialect": "postgresql",
+            "tags": [
+                "transactions",
+                "fraud",
+                "payments",
+                "cards",
+                "mcc"
+            ],
+            "related_tables": [
+                "users",
+                "cards",
+                "fraud_labels",
+                "mcc_codes",
+                "transactions_enriched"
+            ],
+            "related_columns": [
+                "transactions.id",
+                "transactions.date",
+                "transactions.client_id",
+                "transactions.card_id",
+                "transactions.amount",
+                "transactions.use_chip",
+                "transactions.merchant_id",
+                "transactions.merchant_city",
+                "transactions.merchant_state",
+                "transactions.zip",
+                "transactions.mcc",
+                "transactions.errors",
+                "transactions.is_fraud"
+            ],
+            "created_at": "2026-05-18T00:00:00Z",
+            "updated_at": "2026-05-31T20:23:48.857Z",
+            "score": 0.0308
+        },
+        {
+            "id": "table-public-cards",
+            "doc_type": "table",
+            "title": "Tabla cards",
+            "content": "Tabla de tarjetas emitidas a los clientes. Incluye información de producto y límites para analizar uso de tarjetas, exposición de crédito y su vínculo con transacciones y fraude.",
+            "table_name": "cards",
+            "column_name": null,
+            "source_system": "postgresql_wsl_fraud_db",
+            "sql_dialect": "postgresql",
+            "tags": [
+                "cards",
+                "payments",
+                "credit",
+                "limits",
+                "fraud"
+            ],
+            "related_tables": [
+                "users",
+                "transactions",
+                "transactions_enriched"
+            ],
+            "related_columns": [
+                "cards.id",
+                "cards.client_id",
+                "cards.card_brand",
+                "cards.card_type",
+                "cards.card_number",
+                "cards.expires",
+                "cards.cvv",
+                "cards.has_chip",
+                "cards.num_cards_issued",
+                "cards.credit_limit",
+                "cards.acct_open_date",
+                "cards.year_pin_last_changed",
+                "cards.card_on_dark_web"
+            ],
+            "created_at": "2026-05-18T00:00:00Z",
+            "updated_at": "2026-05-31T20:23:48.699Z",
+            "score": 0.0299
+        }
+    ],
+    "document_count": 8
+}

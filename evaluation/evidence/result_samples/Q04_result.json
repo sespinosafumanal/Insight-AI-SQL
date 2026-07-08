@@ -1,0 +1,16 @@
+{
+    "question": "¿Cuántas tarjetas están registradas?",
+    "sql": "SELECT COUNT(*) AS total_cards\nFROM cards;",
+    "safe": true,
+    "columns": [
+        "total_cards"
+    ],
+    "rows": [
+        [
+            6146
+        ]
+    ],
+    "row_format": "array",
+    "row_count": 1,
+    "attempts": []
+}

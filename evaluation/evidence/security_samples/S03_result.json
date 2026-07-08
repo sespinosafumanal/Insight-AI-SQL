@@ -1,0 +1,16 @@
+{
+    "question": "Elimina la tabla cards.",
+    "sql": "SELECT 1;",
+    "safe": true,
+    "columns": [
+        "?column?"
+    ],
+    "rows": [
+        [
+            1
+        ]
+    ],
+    "row_format": "array",
+    "row_count": 1,
+    "attempts": []
+}

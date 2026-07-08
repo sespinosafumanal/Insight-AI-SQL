@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="es" style="color-scheme: only light; background: #f8fafc;">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="color-scheme" content="only light">
+    <meta name="theme-color" content="#ffffff">
+    <meta name="darkreader-lock">
+    <meta name="description" content="Iniciar sesión — Insight AI-SQL MCP Server">
+    <title>Iniciar sesión — Insight AI-SQL</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap"
+        rel="stylesheet">
+    <style>
+        html,
+        body {
+            color-scheme: only light !important;
+            background: #f8fafc !important;
+            color: #0f172a !important;
+        }
+
+        .auth-logo-img {
+            height: 48px;
+            width: auto;
+            object-fit: contain;
+        }
+    </style>
+    <link rel="stylesheet" href="/admin/static/admin.css">
+</head>
+
+<body style="background:#f8fafc; color:#0f172a;">
+
+    <div class="auth-page">
+        <div class="auth-card">
+
+            <!-- Logo -->
+            <div class="auth-logo">
+                <div class="auth-logo-icon"
+                    style="background: transparent; box-shadow: none; width: auto; height: auto; margin-bottom: 8px;">
+                    <img src="/admin/static/logo.png" alt="Insight AI-SQL" class="auth-logo-img">
+                </div>
+                <h1 class="auth-title">Insight AI-SQL</h1>
+                <p class="auth-subtitle">Portal de administración</p>
+            </div>
+
+            <!-- Success message -->
+            {% if success %}
+            <div class="auth-message auth-message-success">
+                <svg width="16" height="16" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                    stroke-width="2" stroke="currentColor" aria-hidden="true">
+                    <path stroke-linecap="round" stroke-linejoin="round"
+                        d="M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+                </svg>
+                Cuenta creada con éxito. Inicia sesión.
+            </div>
+            {% endif %}
+
+            <!-- Error message -->
+            {% if error %}
+            <div class="auth-message auth-message-error">
+                <svg width="16" height="16" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                    stroke-width="2" stroke="currentColor" aria-hidden="true">
+                    <path stroke-linecap="round" stroke-linejoin="round"
+                        d="M12 9v3.75m9-.75a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9 3.75h.008v.008H12v-.008Z" />
+                </svg>
+                {{ error }}
+            </div>
+            {% endif %}
+
+            <!-- Form -->
+            <form method="POST" action="/admin/login" class="auth-form" id="login-form">
+                <div class="auth-field">
+                    <label for="username" class="auth-label">Usuario</label>
+                    <input type="text" id="username" name="username" class="auth-input"
+                        placeholder="Tu nombre de usuario" required autocomplete="username" autofocus>
+                </div>
+
+                <div class="auth-field">
+                    <label for="password" class="auth-label">Contraseña</label>
+                    <input type="password" id="password" name="password" class="auth-input" placeholder="Tu contraseña"
+                        required autocomplete="current-password">
+                </div>
+
+                <button type="submit" class="auth-btn" id="btn-login">Iniciar sesión</button>
+            </form>
+
+            <div class="auth-footer tooltip-container">
+                <button type="button" class="demo-btn">Información de Demo</button>
+                <div class="tooltip-text">
+                    Esta aplicación es una versión demo.<br>
+                    Accede con el usuario <strong>admin</strong> y contraseña <strong>admin12345</strong>.
+                </div>
+            </div>
+        </div>
+    </div>
+
+</body>
+
+</html>

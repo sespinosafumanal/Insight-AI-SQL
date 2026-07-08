@@ -1,0 +1,16 @@
+{
+    "question": "¿Cuántos usuarios hay en la base de datos?",
+    "sql": "SELECT COUNT(*) AS total_users\nFROM users;",
+    "safe": true,
+    "columns": [
+        "total_users"
+    ],
+    "rows": [
+        [
+            2000
+        ]
+    ],
+    "row_format": "array",
+    "row_count": 1,
+    "attempts": []
+}

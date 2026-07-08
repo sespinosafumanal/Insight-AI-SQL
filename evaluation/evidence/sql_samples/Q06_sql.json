@@ -1,0 +1,56 @@
+{
+    "question": "¿Cuál es el importe total de todas las transacciones?",
+    "sql": "SELECT SUM(amount) AS total_amount\nFROM transactions;",
+    "safe": true,
+    "reason": "Consulta SQL de solo lectura válida.",
+    "context_documents": [
+        {
+            "id": "query-example-auto-20260518-000001",
+            "doc_type": "query_example",
+            "title": "Consulta validada: volumen total de transacciones y fraude",
+            "score": 0.0333
+        },
+        {
+            "id": "column-public-transactions-amount",
+            "doc_type": "column",
+            "title": "Columna transactions.amount",
+            "score": 0.0333
+        },
+        {
+            "id": "table-public-transactions",
+            "doc_type": "table",
+            "title": "Tabla transactions",
+            "score": 0.0325
+        },
+        {
+            "id": "query-example-auto-20260518-000005",
+            "doc_type": "query_example",
+            "title": "Consulta validada: ciudades con más transacciones fraudulentas",
+            "score": 0.032
+        },
+        {
+            "id": "column-public-users-total-debt",
+            "doc_type": "column",
+            "title": "Columna users.total_debt",
+            "score": 0.031
+        },
+        {
+            "id": "table-public-fraud-labels",
+            "doc_type": "table",
+            "title": "Tabla fraud_labels",
+            "score": 0.0293
+        },
+        {
+            "id": "relationship-transactions-client-id-users-id",
+            "doc_type": "relationship",
+            "title": "Relación transactions.client_id con users.id",
+            "score": 0.0291
+        },
+        {
+            "id": "column-public-transactions-id",
+            "doc_type": "column",
+            "title": "Columna transactions.id",
+            "score": 0.0267
+        }
+    ]
+}

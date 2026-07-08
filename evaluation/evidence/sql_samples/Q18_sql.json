@@ -1,0 +1,56 @@
+{
+    "question": "¿Qué categorías de comercio presentan mayor importe medio por transacción?",
+    "sql": "SELECT\n  mcc_description,\n  ROUND(AVG(amount), 2) AS average_transaction_amount,\n  COUNT(*) AS total_transactions\nFROM transactions_enriched\nGROUP BY mcc_description\nHAVING COUNT(*) > 100\nORDER BY average_transaction_amount DESC\nLIMIT 10;",
+    "safe": true,
+    "reason": "Consulta SQL de solo lectura válida.",
+    "context_documents": [
+        {
+            "id": "query-example-auto-20260518-000003",
+            "doc_type": "query_example",
+            "title": "Consulta validada: fraude por categoría de comercio",
+            "score": 0.0333
+        },
+        {
+            "id": "table-public-transactions",
+            "doc_type": "table",
+            "title": "Tabla transactions",
+            "score": 0.0331
+        },
+        {
+            "id": "column-public-transactions-amount",
+            "doc_type": "column",
+            "title": "Columna transactions.amount",
+            "score": 0.0325
+        },
+        {
+            "id": "query-example-admin-b336ece4-43df-4244-a383-eb4a8dceaac3",
+            "doc_type": "query_example",
+            "title": "Consulta validada: ¿Cuál es el coste promedio por transacción agrupado por rangos de edad?",
+            "score": 0.0323
+        },
+        {
+            "id": "column-public-transactions-merchant-city",
+            "doc_type": "column",
+            "title": "Columna transactions.merchant_city",
+            "score": 0.0315
+        },
+        {
+            "id": "relationship-transactions-mcc-mcc-codes-mcc",
+            "doc_type": "relationship",
+            "title": "Relación transactions.mcc con mcc_codes.mcc",
+            "score": 0.0313
+        },
+        {
+            "id": "column-public-transactions-mcc",
+            "doc_type": "column",
+            "title": "Columna transactions.mcc",
+            "score": 0.0308
+        },
+        {
+            "id": "column-public-transactions-merchant-state",
+            "doc_type": "column",
+            "title": "Columna transactions.merchant_state",
+            "score": 0.0306
+        }
+    ]
+}

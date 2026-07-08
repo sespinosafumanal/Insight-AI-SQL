@@ -1,0 +1,243 @@
+{
+    "question": "¿Cuántas transacciones fraudulentas hay?",
+    "documents": [
+        {
+            "id": "query-example-auto-20260518-000001",
+            "doc_type": "query_example",
+            "title": "Consulta validada: volumen total de transacciones y fraude",
+            "content": "Pregunta del usuario: ¿Cuál es el volumen total de transacciones y qué porcentaje son fraudulentas? SQL validada: SELECT COUNT(*) AS total_transactions, SUM(CASE WHEN is_fraud THEN 1 ELSE 0 END) AS fraudulent_transactions, ROUND(100.0 * SUM(CASE WHEN is_fraud THEN 1 ELSE 0 END) / COUNT(*), 2) AS fraud_rate_percent FROM transactions;",
+            "table_name": "transactions",
+            "column_name": null,
+            "source_system": "postgresql_wsl_fraud_db",
+            "sql_dialect": "postgresql",
+            "tags": [
+                "query_example",
+                "fraud",
+                "transactions",
+                "summary",
+                "auto_generated",
+                "executed_successfully"
+            ],
+            "related_tables": [
+                "transactions"
+            ],
+            "related_columns": [
+                "transactions.id",
+                "transactions.is_fraud"
+            ],
+            "created_at": "2026-05-18T00:00:00Z",
+            "updated_at": "2026-05-31T20:23:45.878Z",
+            "score": 0.0331
+        },
+        {
+            "id": "query-example-auto-20260518-000005",
+            "doc_type": "query_example",
+            "title": "Consulta validada: ciudades con más transacciones fraudulentas",
+            "content": "Pregunta del usuario: ¿Qué ciudades concentran más transacciones fraudulentas? SQL validada: SELECT merchant_city, merchant_state, COUNT(*) AS total_transactions, SUM(CASE WHEN is_fraud THEN 1 ELSE 0 END) AS fraudulent_transactions, ROUND(100.0 * SUM(CASE WHEN is_fraud THEN 1 ELSE 0 END) / COUNT(*), 2) AS fraud_rate_percent FROM transactions WHERE merchant_city IS NOT NULL GROUP BY merchant_city, merchant_state HAVING COUNT(*) > 50 ORDER BY fraudulent_transactions DESC LIMIT 10;",
+            "table_name": "transactions",
+            "column_name": null,
+            "source_system": "postgresql_wsl_fraud_db",
+            "sql_dialect": "postgresql",
+            "tags": [
+                "query_example",
+                "fraud",
+                "transactions",
+                "merchant_city",
+                "merchant_state",
+                "location",
+                "auto_generated",
+                "executed_successfully"
+            ],
+            "related_tables": [
+                "transactions"
+            ],
+            "related_columns": [
+                "transactions.merchant_city",
+                "transactions.merchant_state",
+                "transactions.is_fraud",
+                "transactions.id"
+            ],
+            "created_at": "2026-05-18T00:00:00Z",
+            "updated_at": "2026-05-31T20:23:47.054Z",
+            "score": 0.0331
+        },
+        {
+            "id": "table-public-transactions",
+            "doc_type": "table",
+            "title": "Tabla transactions",
+            "content": "Tabla principal de transacciones con tarjeta. Contiene una fila por transacción, con fecha, cliente, tarjeta, importe, comercio, ciudad, estado, código MCC, errores e indicador booleano de fraude. Usar esta tabla para análisis de volumen transaccional, fraude, importes, evolución temporal y comportamiento por comercio.",
+            "table_name": "transactions",
+            "column_name": null,
+            "source_system": "postgresql_wsl_fraud_db",
+            "sql_dialect": "postgresql",
+            "tags": [
+                "transactions",
+                "fraud",
+                "payments",
+                "cards",
+                "mcc"
+            ],
+            "related_tables": [
+                "users",
+                "cards",
+                "fraud_labels",
+                "mcc_codes",
+                "transactions_enriched"
+            ],
+            "related_columns": [
+                "transactions.id",
+                "transactions.date",
+                "transactions.client_id",
+                "transactions.card_id",
+                "transactions.amount",
+                "transactions.use_chip",
+                "transactions.merchant_id",
+                "transactions.merchant_city",
+                "transactions.merchant_state",
+                "transactions.zip",
+                "transactions.mcc",
+                "transactions.errors",
+                "transactions.is_fraud"
+            ],
+            "created_at": "2026-05-18T00:00:00Z",
+            "updated_at": "2026-05-31T20:23:48.857Z",
+            "score": 0.0308
+        },
+        {
+            "id": "categorical-values-transactions-errors",
+            "doc_type": "business_rule",
+            "title": "Valores posibles de transactions.errors",
+            "content": "La columna transactions.errors contiene errores registrados en transacciones. Valores posibles: Bad CVV; Bad CVV,Insufficient Balance; Bad CVV,Technical Glitch; Bad Card Number; Bad Card Number,Bad CVV; Bad Card Number,Bad Expiration; Bad Card Number,Bad Expiration,Insufficient Balance; Bad Card Number,Insufficient Balance; Bad Card Number,Technical Glitch; Bad Expiration; Bad Expiration,Bad CVV; Bad Expiration,Insufficient Balance; Bad Expiration,Technical Glitch; Bad PIN; Bad PIN,Insufficient Balance; Bad PIN,Technical Glitch; Bad Zipcode; Bad Zipcode,Insufficient Balance; Bad Zipcode,Technical Glitch, Insufficient Balance, Insufficient Balance,Technical Glitch, Technical Glitch",
+            "table_name": "transactions",
+            "column_name": "errors",
+            "source_system": "postgresql_wsl_fraud_db",
+            "sql_dialect": "postgresql",
+            "tags": [
+                "categorical_values",
+                "transactions",
+                "errors"
+            ],
+            "related_tables": [
+                "transactions"
+            ],
+            "related_columns": [
+                "transactions.errors"
+            ],
+            "created_at": "2026-05-18T18:55:48Z",
+            "updated_at": "2026-05-31T20:23:38.783Z",
+            "score": 0.0301
+        },
+        {
+            "id": "categorical-values-transactions-is_fraud",
+            "doc_type": "business_rule",
+            "title": "Valores posibles de transactions.is_fraud",
+            "content": "La columna transactions.is_fraud indica si una transacción es fraudulenta. Valores posibles: false, true",
+            "table_name": "transactions",
+            "column_name": "is_fraud",
+            "source_system": "postgresql_wsl_fraud_db",
+            "sql_dialect": "postgresql",
+            "tags": [
+                "categorical_values",
+                "transactions",
+                "fraud"
+            ],
+            "related_tables": [
+                "transactions"
+            ],
+            "related_columns": [
+                "transactions.is_fraud"
+            ],
+            "created_at": "2026-05-18T18:55:48Z",
+            "updated_at": "2026-05-31T20:23:39.493Z",
+            "score": 0.0167
+        },
+        {
+            "id": "relationship-cards-client-id-users-id",
+            "doc_type": "relationship",
+            "title": "Relación cards.client_id con users.id",
+            "content": "La columna cards.client_id referencia a users.id. Permite enlazar una tarjeta con su titular (usuario) para análisis de exposición por cliente, agregados por cliente y enriquecimiento de transacciones.",
+            "table_name": "cards",
+            "column_name": "client_id",
+            "source_system": "postgresql_wsl_fraud_db",
+            "sql_dialect": "postgresql",
+            "tags": [
+                "relationship",
+                "join",
+                "users",
+                "cards",
+                "client_id"
+            ],
+            "related_tables": [
+                "cards",
+                "users"
+            ],
+            "related_columns": [
+                "cards.client_id",
+                "users.id"
+            ],
+            "created_at": "2026-05-18T00:00:00Z",
+            "updated_at": "2026-05-31T20:23:47.336Z",
+            "score": 0.0167
+        },
+        {
+            "id": "column-public-transactions-is-fraud",
+            "doc_type": "column",
+            "title": "Columna transactions.is_fraud",
+            "content": "La columna transactions.is_fraud indica si una transacción es fraudulenta. Tipo boolean en PostgreSQL. true significa transacción fraudulenta y false significa transacción no fraudulenta. Debe usarse para calcular tasas de fraude, número de fraudes y comparativas entre categorías de comercio, tarjetas, clientes o periodos temporales.",
+            "table_name": "transactions",
+            "column_name": "is_fraud",
+            "source_system": "postgresql_wsl_fraud_db",
+            "sql_dialect": "postgresql",
+            "tags": [
+                "fraud",
+                "boolean",
+                "transactions",
+                "risk"
+            ],
+            "related_tables": [
+                "transactions",
+                "transactions_enriched",
+                "fraud_labels"
+            ],
+            "related_columns": [
+                "transactions.id",
+                "transactions.amount",
+                "transactions.date",
+                "transactions.mcc",
+                "fraud_labels.is_fraud"
+            ],
+            "created_at": "2026-05-18T00:00:00Z",
+            "updated_at": "2026-05-31T20:23:41.466Z",
+            "score": 0.0164
+        },
+        {
+            "id": "relationship-transactions-client-id-users-id",
+            "doc_type": "relationship",
+            "title": "Relación transactions.client_id con users.id",
+            "content": "La columna transactions.client_id referencia a users.id. Permite analizar transacciones por cliente, calcular métricas por usuario y cruzar comportamiento de pago con atributos del cliente.",
+            "table_name": "transactions",
+            "column_name": "client_id",
+            "source_system": "postgresql_wsl_fraud_db",
+            "sql_dialect": "postgresql",
+            "tags": [
+                "relationship",
+                "join",
+                "transactions",
+                "users",
+                "client_id"
+            ],
+            "related_tables": [
+                "transactions",
+                "users"
+            ],
+            "related_columns": [
+                "transactions.client_id",
+                "users.id"
+            ],
+            "created_at": "2026-05-18T00:00:00Z",
+            "updated_at": "2026-05-31T20:23:47.638Z",
+            "score": 0.0164
+        }
+    ],
+    "document_count": 8
+}
