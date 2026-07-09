@@ -191,47 +191,55 @@ def _create_admin_app():
     from fastapi.responses import RedirectResponse
     from app.admin.routes import router as admin_router, _RequiresLogin
 
-    admin_app = FastAPI(title="TFM MCP Admin Panel")
-    admin_app.include_router(admin_router)
+    app_fastapi = FastAPI(title="TFM MCP Admin Panel")
+    app_fastapi.include_router(admin_router)
 
     # Handler para redirigir a login cuando no hay sesion valida.
-    @admin_app.exception_handler(_RequiresLogin)
+    @app_fastapi.exception_handler(_RequiresLogin)
     async def _redirect_to_login(request: Request, exc: _RequiresLogin):
         return RedirectResponse(url="/admin/login", status_code=303)
 
     # Servir archivos estaticos del panel admin.
     static_dir = Path(__file__).parent / "admin" / "static"
-    admin_app.mount("/admin/static", StaticFiles(directory=str(static_dir)), name="admin-static")
+    app_fastapi.mount("/admin/static", StaticFiles(directory=str(static_dir)), name="admin-static")
 
-    return admin_app
+    return app_fastapi
 
+# --- CONFIGURACIÓN DE LA APLICACIÓN PARA PRODUCCIÓN (ASGI) ---
+# Se crea la app a nivel de módulo para que los servidores como Gunicorn/Uvicorn
+# (usados por Azure Web Apps) puedan encontrarla automáticamente.
+app = _create_admin_app()
+mcp_app = mcp.http_app()
+
+# Vincular el ciclo de vida (lifespan) del MCP a la app principal
+# Esto es CRÍTICO para que FastMCP inicialice sus tareas asíncronas internas
+app.router.lifespan_context = mcp_app.lifespan
+
+# Montar la app MCP en una sub-ruta
+app.mount("/mcp_server", mcp_app)
+
+# Exponemos `admin_app` por retrocompatibilidad por si se usa en otros sitios
+admin_app = app
 
 if __name__ == "__main__":
     import uvicorn
+    import os
 
     print("\n  [UNIFICADO] Configurando servidor MCP y Panel de Administración en el mismo puerto...")
     
-    # 1. Crear la app de administración (FastAPI)
-    admin_app = _create_admin_app()
-
-    # 2. Obtener la app del MCP (Starlette)
-    mcp_app = mcp.http_app()
-
-    # 3. Vincular el ciclo de vida (lifespan) del MCP a la app principal
-    # Esto es CRÍTICO para que FastMCP inicialice sus tareas asíncronas internas
-    admin_app.router.lifespan_context = mcp_app.lifespan
-
-    # 4. Montar la app MCP en una sub-ruta
-    admin_app.mount("/mcp_server", mcp_app)
-
     # El host debe ser 0.0.0.0 para que Azure pueda enrutar el tráfico correctamente
     # En local, settings.SERVER_HOST podría seguir siendo 127.0.0.99 o 0.0.0.0
     host = "0.0.0.0" if settings.SERVER_HOST == "127.0.0.99" else settings.SERVER_HOST
-    port = settings.ADMIN_PORT if settings.ADMIN_PORT != 8001 else 8000
+    # En Azure, el puerto a menudo viene por variable de entorno PORT
+    port_env = os.environ.get("PORT")
+    if port_env:
+        port = int(port_env)
+    else:
+        port = settings.ADMIN_PORT if settings.ADMIN_PORT != 8001 else 8000
 
     print(f"  [>] Panel Admin disponible en: http://{host}:{port}/admin/")
     print(f"      Login: http://{host}:{port}/admin/login")
     print(f"  [>] MCP SSE URL disponible en: http://{host}:{port}/mcp_server/mcp\n")
 
     # Ejecutar la aplicación unificada en un único servidor Uvicorn
-    uvicorn.run(admin_app, host=host, port=port, log_level="info")
+    uvicorn.run("app.main:app", host=host, port=port, log_level="info")
