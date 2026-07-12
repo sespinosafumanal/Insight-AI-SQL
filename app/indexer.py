@@ -77,26 +77,39 @@ def _extract_tables_from_sql(sql: str) -> list[str]:
     return tables
 
 
+import sqlparse
+
 def _extract_columns_from_sql(sql: str, tables: list[str]) -> list[str]:
     """
-    Extrae referencias tabla.columna del SQL.
+    Extrae referencias a columnas de la consulta SQL ignorando palabras clave y literales.
+    Utiliza sqlparse para extraer todos los identificadores, incluyendo aquellos 
+    sin alias de tabla explícito, mejorando la completitud de los metadatos para el RAG.
 
     Args:
         sql (str): Consulta SQL.
         tables (list[str]): Nombres de las tablas detectadas en la consulta.
 
     Returns:
-        list[str]: Lista de columnas únicas extraídas en formato 'tabla.columna'.
+        list[str]: Lista de columnas (y posibles alias) únicas extraídas.
     """
-    pattern = r"([a-zA-Z_][a-zA-Z0-9_]*)\.([a-zA-Z_][a-zA-Z0-9_]*)"
-    matches = re.findall(pattern, sql)
+    parsed = sqlparse.parse(sql)
+    if not parsed:
+        return []
+
+    tables_lower = {t.lower() for t in tables}
     seen = set()
     columns = []
-    for table_ref, col in matches:
-        ref = f"{table_ref}.{col}"
-        if ref.lower() not in seen:
-            seen.add(ref.lower())
-            columns.append(ref)
+
+    from sqlparse.tokens import Name
+    for stmt in parsed:
+        for token in stmt.flatten():
+            if token.ttype is Name:
+                val = token.value.lower()
+                # Excluimos si es el nombre de una tabla ya detectada para no duplicar metadatos
+                if val not in tables_lower and val not in seen:
+                    seen.add(val)
+                    columns.append(val)
+
     return columns
 
 

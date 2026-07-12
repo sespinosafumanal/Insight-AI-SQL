@@ -1,0 +1,424 @@
+{% extends "layout.html" %}
+
+{% block content %}
+
+<a href="/admin/" class="back-link">
+    <svg width="14" height="14" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2"
+        stroke="currentColor" aria-hidden="true">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5 3 12m0 0 7.5-7.5M3 12h18" />
+    </svg>
+    Volver a pendientes
+</a>
+
+<!-- Two-column layout -->
+<div class="detail-layout">
+
+    <!-- ===== LEFT COLUMN — Main content ===== -->
+    <div class="detail-main">
+
+        <!-- Question card -->
+        <div class="card" style="margin-bottom: 20px;">
+            <div class="card-header">
+                <span class="card-title">
+                    <svg width="14" height="14" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                        stroke-width="1.8" stroke="currentColor" aria-hidden="true">
+                        <path stroke-linecap="round" stroke-linejoin="round"
+                            d="M7.5 8.25h9m-9 3H12m-9.75 1.51c0 1.6 1.123 2.994 2.707 3.227 1.129.166 2.27.293 3.423.379.35.026.67.21.865.501L12 21l2.755-4.133a1.14 1.14 0 0 1 .865-.501 48.172 48.172 0 0 0 3.423-.379c1.584-.233 2.707-1.626 2.707-3.228V6.741c0-1.602-1.123-2.995-2.707-3.228A48.394 48.394 0 0 0 12 3c-2.392 0-4.744.175-7.043.513C3.373 3.746 2.25 5.14 2.25 6.741v6.018Z" />
+                    </svg>
+                    Pregunta del usuario
+                </span>
+                <span class="badge badge-{{ candidate.status }}">{{ candidate.status }}</span>
+            </div>
+            <div class="card-body">
+                <p class="question-text">{{ candidate.question }}</p>
+            </div>
+        </div>
+
+        <!-- SQL card with interactive console -->
+        <div class="card" style="margin-bottom: 20px;">
+            <div class="card-header">
+                <span class="card-title">
+                    <svg width="14" height="14" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                        stroke-width="1.8" stroke="currentColor" aria-hidden="true">
+                        <path stroke-linecap="round" stroke-linejoin="round"
+                            d="m6.75 7.5 3 2.25-3 2.25m4.5 0h3m-9 8.25h13.5A2.25 2.25 0 0 0 21 18V6a2.25 2.25 0 0 0-2.25-2.25H5.25A2.25 2.25 0 0 0 3 6v12a2.25 2.25 0 0 0 2.25 2.25Z" />
+                    </svg>
+                    SQL generado por la IA
+                </span>
+            </div>
+            <div class="card-body">
+
+                <!-- Read-only view -->
+                <div class="sql-wrapper" id="sql-readonly-wrapper">
+                    <pre class="sql-block" id="sql-display"><code>{{ candidate.sql }}</code></pre>
+                    <button class="copy-btn" id="copy-sql-btn" onclick="copySql()" title="Copiar al portapapeles">
+                        <svg width="12" height="12" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                            stroke-width="2" stroke="currentColor" aria-hidden="true">
+                            <path stroke-linecap="round" stroke-linejoin="round"
+                                d="M15.75 17.25v3.375c0 .621-.504 1.125-1.125 1.125h-9.75a1.125 1.125 0 0 1-1.125-1.125V7.875c0-.621.504-1.125 1.125-1.125H6.75a9.06 9.06 0 0 1 1.5.124m7.5 10.376h3.375c.621 0 1.125-.504 1.125-1.125V11.25c0-4.46-3.243-8.161-7.5-8.876a9.06 9.06 0 0 0-1.5-.124H9.375c-.621 0-1.125.504-1.125 1.125v3.5m7.5 10.375H9.375a1.125 1.125 0 0 1-1.125-1.125v-9.25m12 6.625v-1.875a3.375 3.375 0 0 0-3.375-3.375h-1.5a1.125 1.125 0 0 1-1.125-1.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H9.75" />
+                        </svg>
+                        Copiar
+                    </button>
+                </div>
+
+                {% if candidate.status == 'pending' %}
+                <!-- Interactive SQL editor -->
+                <div style="margin-top: 18px; padding-top: 18px; border-top: 1px solid var(--border-light);">
+                    <div class="console-header">
+                        <span class="console-label">Consola interactiva — edita y prueba antes de aprobar</span>
+                        <button class="btn btn-secondary" onclick="resetEditor()" title="Restaurar SQL original"
+                            style="font-size:0.75rem; padding: 4px 10px;">
+                            Restaurar
+                        </button>
+                    </div>
+                    <textarea class="sql-editor" id="sql-editor" spellcheck="false">{{ candidate.sql }}</textarea>
+
+                    <div style="display:flex; gap:8px; margin-top: 10px;">
+                        <button class="btn btn-detail" onclick="runSql('{{ candidate.id }}')" id="run-btn">
+                            <svg width="14" height="14" xmlns="http://www.w3.org/2000/svg" fill="none"
+                                viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" aria-hidden="true">
+                                <path stroke-linecap="round" stroke-linejoin="round"
+                                    d="M5.25 5.653c0-.856.917-1.398 1.667-.986l11.54 6.347a1.125 1.125 0 0 1 0 1.972l-11.54 6.347a1.125 1.125 0 0 1-1.667-.986V5.653Z" />
+                            </svg>
+                            Ejecutar SQL
+                        </button>
+                    </div>
+
+                    <div class="run-spinner" id="run-spinner">
+                        <svg width="20" height="20" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                            stroke-width="1.5" stroke="currentColor"
+                            style="animation:spin 1s linear infinite;display:inline-block;vertical-align:middle;margin-right:6px;"
+                            aria-hidden="true">
+                            <path stroke-linecap="round" stroke-linejoin="round"
+                                d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0 3.181 3.183a8.25 8.25 0 0 0 13.803-3.7M4.031 9.865a8.25 8.25 0 0 1 13.803-3.7l3.181 3.182m0-4.991v4.99" />
+                        </svg>
+                        Ejecutando consulta…
+                    </div>
+
+                    <div class="run-error" id="run-error"></div>
+
+                    <div class="run-result" id="run-result">
+                        <div class="run-result-header">
+                            <svg width="13" height="13" xmlns="http://www.w3.org/2000/svg" fill="none"
+                                viewBox="0 0 24 24" stroke-width="1.8" stroke="currentColor" aria-hidden="true">
+                                <path stroke-linecap="round" stroke-linejoin="round"
+                                    d="M3.375 19.5h17.25m-17.25 0a1.125 1.125 0 0 1-1.125-1.125M3.375 19.5h7.5c.621 0 1.125-.504 1.125-1.125m-9.75 0V5.625m0 12.75v-1.5c0-.621.504-1.125 1.125-1.125m18.375 2.625V5.625m0 12.75c0 .621-.504 1.125-1.125 1.125m1.125-1.125v-1.5c0-.621-.504-1.125-1.125-1.125m0 3.75h-7.5A1.125 1.125 0 0 1 12 18.375m9.75-12.75c0-.621-.504-1.125-1.125-1.125H3.375c-.621 0-1.125.504-1.125 1.125m19.5 0v1.5c0 .621-.504 1.125-1.125 1.125M2.25 5.625v1.5c0 .621.504 1.125 1.125 1.125m0 0h17.25m-17.25 0h7.5c.621 0 1.125.504 1.125 1.125M3.375 8.25c-.621 0-1.125.504-1.125 1.125v1.5c0 .621.504 1.125 1.125 1.125" />
+                            </svg>
+                            Resultado de la ejecución
+                            <span class="run-count" id="run-count"></span>
+                        </div>
+                        <div class="run-result-body" id="run-result-body"></div>
+                    </div>
+                </div>
+                {% endif %}
+
+            </div>
+        </div>
+
+        <!-- Sample results card (if available) -->
+        {% if candidate.columns and candidate.sample_rows %}
+        <div class="card">
+            <div class="card-header">
+                <span class="card-title">
+                    <svg width="14" height="14" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                        stroke-width="1.8" stroke="currentColor" aria-hidden="true">
+                        <path stroke-linecap="round" stroke-linejoin="round"
+                            d="M3 13.125C3 12.504 3.504 12 4.125 12h2.25c.621 0 1.125.504 1.125 1.125v6.75C7.5 20.496 6.996 21 6.375 21h-2.25A1.125 1.125 0 0 1 3 19.875v-6.75ZM9.75 8.625c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125v11.25c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 0 1-1.125-1.125V8.625ZM16.5 4.125c0-.621.504-1.125 1.125-1.125h2.25C20.496 3 21 3.504 21 4.125v15.75c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 0 1-1.125-1.125V4.125Z" />
+                    </svg>
+                    Muestra de resultados
+                </span>
+                <span style="font-size:0.75rem; color:var(--text-muted);">{{ candidate.sample_rows | length }}
+                    filas</span>
+            </div>
+            <div class="card-body" style="padding:0;">
+                <div style="overflow-x:auto;">
+                    <table class="data-table sample-table">
+                        <thead>
+                            <tr>
+                                {% for col in candidate.columns %}
+                                <th>{{ col }}</th>
+                                {% endfor %}
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for row in candidate.sample_rows %}
+                            <tr>
+                                {% for cell in row %}
+                                <td>{{ cell }}</td>
+                                {% endfor %}
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+
+    </div>
+
+    <!-- ===== RIGHT COLUMN — Metadata & actions ===== -->
+    <div class="detail-sidebar">
+
+        <!-- Metadata card -->
+        <div class="card" style="margin-bottom: 16px;">
+            <div class="card-header">
+                <span class="card-title">
+                    <svg width="14" height="14" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                        stroke-width="1.8" stroke="currentColor" aria-hidden="true">
+                        <path stroke-linecap="round" stroke-linejoin="round"
+                            d="m11.25 11.25.041-.02a.75.75 0 0 1 1.063.852l-.708 2.836a.75.75 0 0 0 1.063.853l.041-.021M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9-3.75h.008v.008H12V8.25Z" />
+                    </svg>
+                    Metadatos
+                </span>
+            </div>
+            <div class="card-body">
+                <div class="meta-grid">
+                    <div class="meta-item">
+                        <span class="meta-label">Estado</span>
+                        <span class="meta-value"><span class="badge badge-{{ candidate.status }}">{{ candidate.status
+                                }}</span></span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Filas devueltas</span>
+                        <span class="meta-value">{{ candidate.row_count or '—' }}</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Capturado</span>
+                        <span class="meta-value" style="font-size:0.82rem; color:var(--text-secondary);">{{
+                            candidate.created_at }}</span>
+                    </div>
+                    {% if candidate.reviewed_at %}
+                    <div class="meta-item">
+                        <span class="meta-label">Revisado</span>
+                        <span class="meta-value" style="font-size:0.82rem; color:var(--text-secondary);">{{
+                            candidate.reviewed_at }}</span>
+                    </div>
+                    {% endif %}
+                    {% if candidate.reviewer_notes %}
+                    <div class="meta-item">
+                        <span class="meta-label">Notas del revisor</span>
+                        <span class="meta-value"
+                            style="font-size:0.82rem; color:var(--text-secondary); white-space:pre-wrap;">{{
+                            candidate.reviewer_notes }}</span>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <!-- RAG documents card -->
+        {% if candidate.context_doc_ids %}
+        <div class="card" style="margin-bottom: 16px;">
+            <div class="card-header">
+                <span class="card-title">
+                    <svg width="14" height="14" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                        stroke-width="1.8" stroke="currentColor" aria-hidden="true">
+                        <path stroke-linecap="round" stroke-linejoin="round"
+                            d="M6.429 9.75 2.25 12l4.179 2.25m0-4.5 5.571 3 5.571-3m-11.142 0L2.25 7.5 12 2.25l9.75 5.25-4.179 2.25m0 0L21.75 12l-4.179 2.25m0 0 4.179 2.25L12 21.75 2.25 16.5l4.179-2.25m11.142 0-5.571 3-5.571-3" />
+                    </svg>
+                    Contexto RAG usado
+                </span>
+                <span style="font-size:0.72rem; color:var(--text-muted);">{{ candidate.context_doc_ids | length }}
+                    docs</span>
+            </div>
+            <div class="card-body">
+                <ul class="doc-list">
+                    {% for doc_id in candidate.context_doc_ids %}
+                    <li class="doc-id" title="{{ doc_id }}">{{ doc_id }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+        {% endif %}
+
+        <!-- Action forms (only for pending) -->
+        {% if candidate.status == 'pending' %}
+        <div class="card">
+            <div class="card-header">
+                <span class="card-title">
+                    <svg width="14" height="14" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                        stroke-width="1.8" stroke="currentColor" aria-hidden="true">
+                        <path stroke-linecap="round" stroke-linejoin="round"
+                            d="M9 12.75 11.25 15 15 9.75m-3-7.036A11.959 11.959 0 0 1 3.598 6 11.99 11.99 0 0 0 3 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285Z" />
+                    </svg>
+                    Decisión de revisión
+                </span>
+            </div>
+            <div class="card-body">
+                <div class="action-panel">
+
+                    <!-- Approve form -->
+                    <div class="action-form-card">
+                        <div class="action-form-header approve">
+                            <svg width="14" height="14" xmlns="http://www.w3.org/2000/svg" fill="none"
+                                viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" aria-hidden="true">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="m4.5 12.75 6 6 9-13.5" />
+                            </svg>
+                            Aprobar e indexar
+                        </div>
+                        <div class="action-form-body">
+                            <form method="post" action="/admin/candidate/{{ candidate.id }}/approve" id="approve-form">
+                                <input type="hidden" name="modified_sql" id="approve-modified-sql">
+                                <label for="approve-notes" class="form-label">Notas del revisor (opcional)</label>
+                                <textarea id="approve-notes" name="reviewer_notes" class="form-textarea"
+                                    placeholder="Observaciones sobre la aprobación…"></textarea>
+                                <button type="submit" class="btn btn-approve btn-lg" style="width:100%;"
+                                    onclick="return prepareApprove()">
+                                    <svg width="15" height="15" xmlns="http://www.w3.org/2000/svg" fill="none"
+                                        viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" aria-hidden="true">
+                                        <path stroke-linecap="round" stroke-linejoin="round"
+                                            d="m4.5 12.75 6 6 9-13.5" />
+                                    </svg>
+                                    Aprobar e indexar
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+
+                    <!-- Reject form -->
+                    <div class="action-form-card">
+                        <div class="action-form-header reject">
+                            <svg width="14" height="14" xmlns="http://www.w3.org/2000/svg" fill="none"
+                                viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" aria-hidden="true">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />
+                            </svg>
+                            Rechazar
+                        </div>
+                        <div class="action-form-body">
+                            <form method="post" action="/admin/candidate/{{ candidate.id }}/reject">
+                                <label for="reject-notes" class="form-label">Motivo del rechazo (opcional)</label>
+                                <textarea id="reject-notes" name="reviewer_notes" class="form-textarea"
+                                    placeholder="Motivo por el que se rechaza…"></textarea>
+                                <button type="submit" class="btn btn-reject btn-lg" style="width:100%;"
+                                    onclick="return confirm('¿Confirmar rechazo de esta consulta?')">
+                                    <svg width="15" height="15" xmlns="http://www.w3.org/2000/svg" fill="none"
+                                        viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" aria-hidden="true">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />
+                                    </svg>
+                                    Rechazar consulta
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+        {% endif %}
+
+    </div>
+</div>
+
+<style>
+    @keyframes spin {
+        from {
+            transform: rotate(0deg);
+        }
+
+        to {
+            transform: rotate(360deg);
+        }
+    }
+</style>
+
+<script>
+    function resetEditor() {
+        const display = document.getElementById('sql-display');
+        const editor = document.getElementById('sql-editor');
+        if (display && editor) {
+            editor.value = display.textContent.trim();
+        }
+    }
+
+    function prepareApprove() {
+        const editor = document.getElementById('sql-editor');
+        const hiddenInput = document.getElementById('approve-modified-sql');
+        if (editor && hiddenInput) {
+            hiddenInput.value = editor.value.trim();
+        }
+        return confirm('¿Confirmar aprobación e indexación de esta consulta?');
+    }
+
+    async function runSql(candidateId) {
+        const editor = document.getElementById('sql-editor');
+        const spinner = document.getElementById('run-spinner');
+        const errorDiv = document.getElementById('run-error');
+        const resultDiv = document.getElementById('run-result');
+        const resultBody = document.getElementById('run-result-body');
+        const runCount = document.getElementById('run-count');
+
+        if (!editor || !spinner || !errorDiv || !resultDiv) return;
+
+        const sql = editor.value.trim();
+        if (!sql) return;
+
+        // Mostrar estado de carga
+        spinner.style.display = 'block';
+        errorDiv.style.display = 'none';
+        resultDiv.style.display = 'none';
+
+        try {
+            const formData = new FormData();
+            formData.append('sql', sql);
+
+            const response = await fetch(`/admin/candidate/${candidateId}/run`, {
+                method: 'POST',
+                body: formData
+            });
+
+            const data = await response.json();
+
+            if (!response.ok) {
+                errorDiv.textContent = data.error || 'Error al ejecutar la consulta';
+                errorDiv.style.display = 'block';
+            } else {
+                const columns = data.columns || [];
+                const rows = data.rows || [];
+
+                runCount.textContent = `(${rows.length} fila${rows.length !== 1 ? 's' : ''})`;
+
+                if (rows.length === 0) {
+                    resultBody.innerHTML = '<div style="padding: 16px; color: var(--text-muted); text-align: center;">La consulta se ejecutó sin errores pero no devolvió resultados.</div>';
+                } else {
+                    let tableHtml = '<div style="overflow-x: auto;"><table class="data-table sample-table" style="margin:0; width: 100%;"><thead><tr>';
+                    for (const col of columns) {
+                        tableHtml += `<th>${escapeHtml(col)}</th>`;
+                    }
+                    tableHtml += '</tr></thead><tbody>';
+
+                    for (const row of rows) {
+                        tableHtml += '<tr>';
+                        for (const col of columns) {
+                            tableHtml += `<td>${escapeHtml(row[col])}</td>`;
+                        }
+                        tableHtml += '</tr>';
+                    }
+                    tableHtml += '</tbody></table></div>';
+
+                    resultBody.innerHTML = tableHtml;
+                }
+                resultDiv.style.display = 'block';
+            }
+        } catch (err) {
+            errorDiv.textContent = 'Error de red: ' + err.message;
+            errorDiv.style.display = 'block';
+        } finally {
+            spinner.style.display = 'none';
+        }
+    }
+    
+    // Función auxiliar en caso de que escapeHtml no esté cargado desde admin.js todavía
+    if (typeof escapeHtml !== 'function') {
+        window.escapeHtml = function(str) {
+            return String(str)
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#039;');
+        };
+    }
+</script>
+
+{% endblock %}
