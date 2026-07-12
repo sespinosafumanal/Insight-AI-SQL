@@ -53,10 +53,11 @@ app/
   db.py             # Gestión de conexiones y ejecución segura en PostgreSQL
   indexer.py        # Pipeline de indexación de documentos hacia Azure AI Search
   config.py         # Carga y consolidación de configuraciones (.env y settings.yaml)
-  user_store.py     # Gestión de usuarios del panel de administración (SQLite)
   query_store.py    # Persistencia de telemetría y consultas candidatas (SQLite)
   schemas.py        # Modelos Pydantic para la validación de estructuras
   admin/            # Panel web de administración (FastAPI, Jinja2, HTML/JS)
+    user_store.py   # Gestión de usuarios del panel de administración (SQLite)
+    routes.py       # Rutas y controladores de FastAPI del panel admin
 
 data/               # Bases de datos SQLite locales y documentación base
 evaluation/         # Baterías de pruebas, evidencias de ejecución y análisis de calidad
@@ -93,6 +94,7 @@ AZURE_OPENAI_CHAT_DEPLOYMENT=
 AZURE_OPENAI_EMBEDDING_DEPLOYMENT=
 
 # Base de Datos Relacional
+# NOTA (App Service Linux + Hybrid Connections): Usa un nombre DNS ficticio (ej. fraud-db.local), NO una IP pura.
 POSTGRES_HOST=
 POSTGRES_PORT=5432
 POSTGRES_DB=fraud_db

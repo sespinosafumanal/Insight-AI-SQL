@@ -10,6 +10,7 @@ __pycache__/
 # Archivos de Entorno
 .env
 .env.*
+!.env.example
 
 # Bases de datos locales
 data/*.db
@@ -22,6 +23,11 @@ output.html
 test.html
 downloaded_admin.js
 evaluation/results/
+
+# Scripts de prueba ad-hoc en la raíz del proyecto
+# Los tests formales van en tests/ y NO se ignoran.
+# Este patrón evita que scripts temporales tipo 'test_algo.py' se versionen por error.
+/test_*.py
 
 # IDEs y Editores
 .vscode/

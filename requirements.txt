@@ -7,7 +7,6 @@ sqlparse
 azure-search-documents
 azure-core
 openai
-vanna
 uvicorn
 fastapi
 jinja2

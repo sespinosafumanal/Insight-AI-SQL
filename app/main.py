@@ -208,6 +208,13 @@ def _create_admin_app():
 # --- CONFIGURACIÓN DE LA APLICACIÓN PARA PRODUCCIÓN (ASGI) ---
 # Se crea la app a nivel de módulo para que los servidores como Gunicorn/Uvicorn
 # (usados por Azure Web Apps) puedan encontrarla automáticamente.
+from app.admin.user_store import init_db as init_admin_db
+from app.query_store import init_db as init_query_db
+
+print("\n  [INIT] Inicializando bases de datos locales...")
+init_admin_db()
+init_query_db()
+
 app = _create_admin_app()
 mcp_app = mcp.http_app()
 

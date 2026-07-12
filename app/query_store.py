@@ -418,3 +418,14 @@ def get_context_docs_stats(days: int = 30) -> list[dict]:
     finally:
         conn.close()
 
+
+def init_db() -> None:
+    """
+    Inicializa las tablas de la base de datos de consultas.
+    """
+    conn = _get_connection()
+    try:
+        _ensure_table(conn)
+    finally:
+        conn.close()
+

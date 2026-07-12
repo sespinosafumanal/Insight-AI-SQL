@@ -38,7 +38,7 @@ El ecosistema tecnológico ha sido seleccionado por su madurez y robustez:
     *   **Jinja2 & HTML/JS:** Renderizado interactivo y lógica de presentación del frontend analítico.
 *   **Bases de Datos:**
     *   **PostgreSQL (`psycopg2-binary`):** Motor de base de datos objetivo donde residen los datos corporativos.
-    *   **SQLite:** Almacenamiento local ultraligero y transaccional (`user_store.py`, `query_store.py`) para persistencia de telemetría y perfiles.
+    *   **SQLite:** Almacenamiento local ultraligero y transaccional (`admin/user_store.py`, `query_store.py`) para persistencia de telemetría y perfiles.
 *   **IA y Procesamiento de Datos:**
     *   **Azure OpenAI:** Orquestación de agentes Text-to-SQL y generación cognitiva.
     *   **Azure AI Search (`azure-search-documents`):** Motor de búsqueda vectorial para el paradigma RAG (Retrieval-Augmented Generation).
@@ -59,6 +59,7 @@ El ecosistema tecnológico ha sido seleccionado por su madurez y robustez:
 La solución está proyectada para un despliegue nativo y resiliente en plataformas Cloud:
 *   **Contenedorización Estratégica:** El sistema está preparado para ser paquetizado en contenedores y operado en plataformas Platform-as-a-Service (PaaS) o Kubernetes.
 *   **Conectividad Híbrida Segura:** Para despliegues donde la base de datos resida en redes privadas u *On-Premise*, se soporta el enrutamiento a través de túneles salientes (ej. Azure Relay / Hybrid Connections), eliminando la necesidad de abrir puertos expuestos al internet público.
+    *   **Nota Arquitectónica (App Service Linux):** Debido al diseño del interceptor de red interno, las Hybrid Connections en contenedores Linux de Azure **no enrutan tráfico dirigido a direcciones IP puras**. El Endpoint configurado en el túnel y en la variable `POSTGRES_HOST` debe ser siempre un nombre de dominio ficticio o DNS (ej. `fraud-db.local`). La traducción final a IP se delega al servidor local receptor (Hybrid Connection Manager) a través de su archivo `hosts` nativo.
 
 ### 3.2 Gestión de Configuración (Dual-State)
 Para maximizar la seguridad y la flexibilidad operativa sin requerir redespliegues constantes, el sistema divide su configuración en dos capas lógicas:

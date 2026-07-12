@@ -182,3 +182,23 @@ def verify_user(username: str, password: str) -> bool:
         return bcrypt.checkpw(password.encode("utf-8"), stored_hash)
     finally:
         conn.close()
+
+
+def init_db() -> None:
+    """
+    Inicializa la base de datos de administración y crea el usuario admin por defecto si no existe ninguno.
+    """
+    conn = _get_connection()
+    try:
+        _ensure_table(conn)
+        row = conn.execute("SELECT COUNT(*) as count FROM admin_users").fetchone()
+        count = row["count"] if row else 0
+    finally:
+        conn.close()
+
+    if count == 0:
+        try:
+            create_user("admin", "admin12345")
+            print("  [INIT] Usuario 'admin' por defecto creado en admin_store.db.")
+        except Exception as e:
+            print(f"  [ERROR] No se pudo crear el usuario por defecto: {e}")
